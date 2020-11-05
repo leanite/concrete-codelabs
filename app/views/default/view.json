@@ -1,0 +1,13 @@
+{
+  "title": "Codelabs da Concrete",
+  "description": "Codelabs do capítulo de Android da Concrete.",
+  "tags": [],
+  "categories": [],
+  "exclude": [
+    "^lang-.*"
+  ],
+  "logoUrl": "/images/logo-cs.svg",
+  "toolbarBgColor": "#37474F",
+  "sort": "mainCategory",
+  "pins": []
+}
