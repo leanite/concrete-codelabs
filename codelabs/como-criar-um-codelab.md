@@ -183,7 +183,7 @@ $ gulp serve --codelabs-dir=codelabs
 
 Acesse novamente o endereço `http://localhost:8000` no navegador e veja o site hospedado localmente exibindo o seu Codelab na página principal
 
-TODO: print aqui
+![](assets/como-criar-um-codelab/print-codelabs-dir.png)
 
 ## Ganhando produtividade ao escrever um Codelab
 
