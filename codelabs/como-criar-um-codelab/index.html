@@ -28,27 +28,24 @@
                   feedback-link="http://google.com">
     
       <google-codelab-step label="Instalando os softwares necessários" duration="0">
-        <p>Três softwares são necessários para criar um Codelab: <code>Go</code>, <code>Node.js</code> e <code>claat</code></p>
+        <p>Três softwares são necessários para criar um Codelab: <code>Go</code>, <code>Node.js</code> e <code>CLaaT</code></p>
 <h2 is-upgraded>Linguagem de programação Go</h2>
-<ul>
-<li>Baixar pelo <a href="http://golang.org/dl" target="_blank">site oficial</a></li>
-<li>Extrair o conteúdo da pasta compactada no diretório padrão <code>/usr/local/go</code></li>
-<li>Configurar as seguintes variáveis de ambiente:  <pre><code>GOROOT=/usr/local/go
-GOPATH=$HOME/go
-PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+<p>Baixar pelo Ubuntu com o comando:</p>
+<pre><code>sudo apt install golang
 </code></pre>
-</li>
-</ul>
 <h2 is-upgraded>Ambiente de execução Node.js (versão 10+)</h2>
 <p>Baixar pelo Ubuntu com os comandos:</p>
 <pre><code>$ curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 $ sudo apt install nodejs
 </code></pre>
-<h2 is-upgraded>claat: a ferramenta de linha de comando do Codelabs</h2>
+<h2 is-upgraded>CLaaT: a ferramenta de linha de comando do Codelabs</h2>
 <p>Com o Go já configurado, execute o seguinte comando:</p>
-<pre><code>go get github.com/googlecodelabs/tools/claat
+<pre><code>$ go get github.com/googlecodelabs/tools/claat
 </code></pre>
-<p>O binário do <code>claat</code> estará em <code>~/go/bin</code>. Caso seja necessário, dê permissão de execução ao arquivo com o comando <code>chmod +x claat</code></p>
+<p>O binário do <code>CLaaT</code> estará em <code>~/go/bin</code>. Caso seja necessário, dê permissão de execução ao arquivo com o comando <code>chmod +x claat</code>.</p>
+<p>Copie o binário do <code>CLaaT</code> para <code>/usr/local/bin</code> com o seguinte comando:</p>
+<pre><code>$ sudo cp ~/go/bin/claat /usr/local/bin
+</code></pre>
 
 
       </google-codelab-step>

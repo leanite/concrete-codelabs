@@ -10,22 +10,14 @@ Feedback Link: http://google.com
 
 ## Instalando os softwares necessários
 
-Três softwares são necessários para criar um Codelab: `Go`, `Node.js` e `claat`
+Três softwares são necessários para criar um Codelab: `Go`, `Node.js` e `CLaaT`
 
 ### Linguagem de programação Go
+Baixar pelo Ubuntu com o comando:
 
-- Baixar pelo [site oficial](http://golang.org/dl)
-
-- Extrair o conteúdo da pasta compactada no diretório padrão `/usr/local/go`
-
-- Configurar as seguintes variáveis de ambiente:
-
-    ```
-    GOROOT=/usr/local/go
-    GOPATH=$HOME/go
-    PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-
-    ```
+```
+sudo apt install golang
+```
 
 ### Ambiente de execução Node.js (versão 10+)         
 Baixar pelo Ubuntu com os comandos: 
@@ -35,15 +27,21 @@ $ curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 $ sudo apt install nodejs
 ```
 
-### claat: a ferramenta de linha de comando do Codelabs
+### CLaaT: a ferramenta de linha de comando do Codelabs
 
 Com o Go já configurado, execute o seguinte comando: 
 
 ```
-go get github.com/googlecodelabs/tools/claat
+$ go get github.com/googlecodelabs/tools/claat
 ```
 
-O binário do `claat` estará em `~/go/bin`. Caso seja necessário, dê permissão de execução ao arquivo com o comando `chmod +x claat`
+O binário do `CLaaT` estará em `~/go/bin`. Caso seja necessário, dê permissão de execução ao arquivo com o comando `chmod +x claat`.
+
+Copie o binário do `CLaaT` para `/usr/local/bin` com o seguinte comando:
+
+```
+$ sudo cp ~/go/bin/claat /usr/local/bin
+```
 
 ## Executando o projeto de Codelabs da Concrete localmente
 
