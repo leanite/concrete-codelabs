@@ -106,6 +106,12 @@ $card-col-height: 200px; // column mode
     background-repeat: no-repeat;
     background-position: 0 50%;
   }
+
+  .author-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+  }
 }
 
 .card-pin {
