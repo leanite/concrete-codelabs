@@ -58,17 +58,181 @@ Caso um arquivo unmodified seja removido, esse arquivo deixará de existir no di
 
 ## Configuração inicial
 
-https://git-scm.com/book/pt-br/v2/Come%C3%A7ando-Configura%C3%A7%C3%A3o-Inicial-do-Git
+
+### Instalação
+
+Caso ainda não tenha o Git instalado, basta usar o comando `sudo apt install git` para realizar a instalação no Ubuntu.
+
+### Sua Identidade
+
+A primeira coisa que você deve fazer ao instalar Git é configurar seu nome de usuário e endereço de e-mail. Esses dados são usados a cada commit para determinar a sua autoria. Podemos fazer isso através dos comandos abaixo:
+
+```
+$ git config --global user.name "Fulano de Tal"
+$ git config --global user.email fulanodetal@exemplo.br
+```
+
+Importante: a opção `--global` garante que seu usuário e e-mail serão usados, por padrão, em todos os repositórios em que você commitar. Caso seja necessário alterar essas informações para um repositório específico, basta ir até o diretório desse repositório e executar os comandos acima sem a opção `--global`.
+
+### Configurando o editor padrão
+
+Podemos escolher o editor de texto padrão que será utilizado quando o Git precisar que editemos uma mensagem. Se não for configurado, o Git usará o editor padrão, que pode variar de acordo com o Sistema Operacional. Para configurar o editor de texto padrão, basta usar o comando abaixo:
+
+```
+$ git config --global core.editor [seu editor aqui]
+```
 
 ## Operações fundamentais
 
-init, add, rm, status, checkout, clean -fd, e commit
+### Inicializando um repositório local
 
-https://www.git-scm.com/book/pt-br/v2/Fundamentos-de-Git-Gravando-Altera%C3%A7%C3%B5es-em-Seu-Reposit%C3%B3rio
+Para inicializar um repositório vazio, basta utilizar o comando `git init` no diretório em que deseja criar o repositório. Um novo subdiretório oculto `.git` será criado, contendo todos os arquivos e a estrutura de diretórios internos necessários para o versionamento do seu repositório funcionar corretamente.
+
+![](assets/git-basico-na-pratica/git-init.png)
+
+### Estado atual do repositório
+
+O comando `git status` nos informa como está o estado atual do nosso repositório, ou seja, em que `branch` estamos operando, se existe algum arquivo novo ou alterado, se existem arquivos preparados para serem commitados, se estamos sincronizados com o repositório, entre outras possibilidades.
+
+![](assets/git-basico-na-pratica/git-status.png)
+
+### Gravando alterações no repositório
+
+O comando `git add` adiciona arquivos do diretório de trabalho, tanto rastreados e modificados quanto os não rastreados, à área de stage. Quando adicionamos arquivos, eles se tornam preparados para serem commitados.
+
+![](assets/git-basico-na-pratica/git-add-pre-commit.png)
+
+Tanto o comando `git add README.md hello_world.c` quanto o comando `git add .` podem ser utilizados para adicionar e preparar todos os arquivos que foram alterados ou não são rastreados. A diferença entre esses comandos é que o `git add .` é mais prático, pois recebe como argumento o ponto `.`, que significa **diretório atual**. Quando adicionamos um diretório, por padrão, todos os seus arquivos e pastas modificados também são adicionados recursivamente.
+
+Importante: ao usar `git add .` devemos sempre ter a atenção de avaliar com o comando `git status` se realmente todos os arquivos que estão marcados como novos ou alterados devem ser de fato preparados para o commit.
+
+Após prepararmos os arquivos, usamos o comando `git commit` para submeter as nossas alterações ao repositório. É aberto o editor padrão para que possamos escrever a mensagem de commit, que é obrigatória e sem ela o commit é cancelado. Podemos utilizar também o comando `git commit -m [mensagem]` para realizar um commit com a mensagem `[mensagem]` sem ter que abrir o editor padrão, de forma mais rápida e prática.
+
+![](assets/git-basico-na-pratica/git-commit.png)
+
+Em resumo, é da forma a seguir que ocorrem as mudanças de estado no Git.
+
+![](assets/git-basico-na-pratica/git-estados.png)
+
+### Acessando o histórico de commits
+
+Para acessar o histórico de commits, podemos usar o comando `git log`.
+
+![](assets/git-basico-na-pratica/git-log-normal.png)
+
+Podemos adicionar algumas opções ao comando para filtrar ou facilitar a visualização do histórico de commits. Por exemplo, se adicionarmos a opção `--oneline`, mostramos o histórico de commits de forma simplificada.
+
+`git log --oneline`
+
+![](assets/git-basico-na-pratica/git-log-oneline.png)
+
+Também podemos filtrar os commits por autor utilizando a opção `--author` como em `git log --author=Pedro`:
+
+![](assets/git-basico-na-pratica/git-log-author.png)
+
+Muitas vezes queremos saber o histórico de alterações de um arquivo do nosso repositório. Para isso, podemos usar o comando `git log --follow [arquivo]`. Por exemplo, abaixo temos uma possível saída para o comando `git log --follow LoginActivity.kt`:
+
+![](assets/git-basico-na-pratica/git-log-follow.png)
+
+## Fazendo bons commits
+
+### Escrevendo mensagens de commit nos padrões da comunidade
+
+Uma mensagem de commit é dividida em, pelo menos, duas partes importantes: assunto e corpo da mensagem. Um commit deve ter, pelo menos, o assunto da mensagem, que **não deve exceder 50 caracteres**. Um indicativo de que o commit necessita de um corpo de mensagem é que seu assunto está estourando os seu limite de 50 caracteres. Algumas comunidades aumentam esse limite de 50 caracteres para 72 caracteres, mas nunca excedem o limite de 72 caracteres.
+
+O assunto do commit tem algumas particularidades importantes que devem ser respeitadas. A principal é o seu modo verbal, todo assunto de commit é escrito de forma imperativa. Por exemplo, não escrevemos "Corrigindo bug #234" ou "Corrigimos bug #234", e sim **"Corrige o bug #234!**. Além disso, existe o limite de 50 a 72 caracteres que falamos anteriormente, a convenção de pular uma linha entre o assunto e o corpo da mensagem e não usar ponto final no assunto do commit.
+
+Sobre o corpo do commit, não existe uma convenção sobre o tamanho total do corpo. Ele pode ser tão detalhado quanto um determinado commit necessitar, porém é uma boa prática, e um pedido da comunidade, quebrar linhas a cada 80 caracteres para facilitar a leitura em um terminal clássico.
+
+O motivo para todas essas regras é garantir a legibilidade e o entendimento quando determinada pessoa revisitar o seu commit. Ela irá ler a sua mensagem de commit para descobrir o que aconteceu com o código naquele exato momento. Por exemplo:
+
+    Se aplicado, o que faz o commit d967462?
+
+    commit d967462 (HEAD -> master)
+    Author: Leandro Leite <leandro.leite@concrete.com.br>
+    Date:   Tue Feb 23 18:30:00 2021 -0300
+
+    Corrige um crash na tela de login
+
+    Existia a possibilidade do campo email retornar null quebrando
+    o contrato e causando um NullPointerException na LoginActivity.
+
+A ideia é que o nosso assunto complete a frase "Se aplicado, este commit ...", que no nosso caso ficaria como **"Se aplicado, este commit corrige um crash na tela de login**. 
 
 ## Desfazendo alterações
 
-remover último commit, apendar um commit, tudo aquilo que a gente quer desfazer ou refazer e não sabe
+Desfazer alterações é uma operação importante no Git. Nem sempre tudo sai como imaginamos, um arquivo que não deveria entrar no commit é submetido, queremos reverter o último commit, ir para um commit específico na linha do tempo, entre outras muitas situações que podem ocorrer. Aqui tentaremos mostrar as mais comuns.
+
+### Deletando arquivos
+
+O comando `git rm` serve para deletar arquivos do diretório de trabalho.  
+
+![](assets/git-basico-na-pratica/git-rm.png)
+
+Importante: caso o argumento do comando `git rm` seja um diretório, devemos utilizar a opção `-r`, semelhante ao comando `rm` que é bastante usado nos terminais.
+
+### Removendo um arquivo da área de preparo
+
+Supondo que um arquivo tenha sido alterado e preparado para o commit com o comando `git add`, podemos remover esse arquivo da área de preparo e fazer com que ele volte a ser apenas um arquivo modificado e candidato para commit. Para isso, usamos o comando `git reset`.
+
+![](assets/git-basico-na-pratica/git-reset-basics.png)
+
+### Retornando commits
+
+Podemos acessar um commit específico na linha do tempo e fazer com que os seus arquivos voltem para o diretório de trabalho como arquivos modificados. Para isso, devemos usar também o comando `git reset`, porém de uma forma um pouco diferente, passando como argumento a hash de um commit obtida pelo comando `git log` ou de acordo com alguma operação usando a referência `HEAD`.
+
+Exemplo de um commit retornado pelo comando `git log`:
+
+    commit d96746659346a2a8083c119e331d87c25dbed538
+    Author: Leandro Leite <l.carneiro.leite@accenture.com>
+    Date:   Tue Feb 23 18:30:00 2021 -0300
+
+        Adiciona arquivos README e hello_world.c
+
+A hash do commit é a string `d96746659346a2a8083c119e331d87c25dbed538` e é ela que usaremos como argumento para o comando `git reset`.
+
+![](assets/git-basico-na-pratica/git-reset-commit.png)
+
+### Acessando commits
+
+Podemos acessar um commit específico na linha do tempo e navegar para um estado antigo do projeto. Para isso, devemos usar o comando `git checkout` passando como argumento a hash de um commit obtida pelo comando `git log` ou de acordo com alguma operação usando a referência `HEAD`.
+
+Usaremos a mesma hash do commit anterior, a string `d96746659346a2a8083c119e331d87c25dbed538`, como argumento para o comando `git checkout`.
+
+![](assets/git-basico-na-pratica/git-checkout-commit.png)
+
+Ao acessar um commit específico, recebemos a mensagem que estamos em no estado *detached HEAD*. Isso ocorre quando apontamos especificamente para um commit, ou seja, esse estado pode ser definido como um estado onde a referência HEAD não está apontando para algo com referência, como uma branch ou uma tag. É importante saber que se commitarmos alguma alteração em cima de uma *detached HEAD*, o Git continuará sem posicionar a HEAD em alguma referência e podemos perder essas alterações caso uma branch não seja criada.
+
+![](assets/git-basico-na-pratica/git-checkout-commit-detached.png)
+
+### A referência HEAD
+
+HEAD é um ponteiro que referencia um objeto de commit. Por padrão, quando está em um estado normal, essa referência é o último commit feito em uma branch. Quando a HEAD aponta para um commit sem referência, como por exemplo um commit histórico em uma branch, ela entra em estado *detached*.
+
+Como, geralmente, a HEAD aponta para o último commit de uma branch, é muito comum utilizarmos o modificador `~` quando utilizamos essa referência. Esse modificador significa, basicamente, parente de um determinado grau. Por exemplo, a referência `HEAD~1` significa parente de primeiro grau do último commit de uma branch, ou seja, seu penúltimo commit. Da mesma forma que `HEAD~N` é o parante do n-ésimo grau do último commit.
+
+```
+$ git log --oneline
+
+84fde99 (HEAD -> master) Adiciona function.c
+d967466 Adiciona arquivos README e hello_world.c
+aa1cf8d Adiciona README
+
+$ git checkout HEAD~2
+
+Note: checking out 'HEAD~2'.
+You are in 'detached HEAD' state. (...)
+
+HEAD is now at aa1cf8d Adiciona README
+```
+
+
+### Desfazendo as modificações
+
+git checkout .
+
+
+rm, remover último commit, checkout, clean -fd, apendar um commit, tudo aquilo que a gente quer desfazer ou refazer e não sabe
 
 ## Ramificações do código: trabalhando com branches
 
@@ -76,11 +240,13 @@ branch, stash e checkout
 
 ## Trabalhando com repositórios remotos
 
-clone, pull, fetch, push
+clone, pull, fetch, push, comentário sobre perigo do push force
 
 ## Lidando com conflitos
 
 diff, merge
+
+https://www.atlassian.com/git/tutorials/using-branches/git-merge
 
 ## Rebase (definir um nome bom)
 
