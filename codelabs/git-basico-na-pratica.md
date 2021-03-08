@@ -226,37 +226,119 @@ You are in 'detached HEAD' state. (...)
 HEAD is now at aa1cf8d Adiciona README
 ```
 
+### Revertendo commits
+
+É possível reverter um commit no Git, como se fosse uma operação de desfazer. Ao reverter um commit, o Git identifica as alterações do commit a ser revertido e cria um novo commit, que será o último da branch, desfazendo essas alterações. O comando para reverter um commit é o `git revert`.
+
+```
+$ git log --oneline
+
+1c43838 (HEAD -> master) Adiciona graph.c
+84fde99 Adiciona function.c
+d967466 Adiciona arquivos README e hello_world.c
+aa1cf8d Adiciona README
+
+
+$ git revert 84fde99
+
+[master a06f865] Revert "Adiciona function.c"
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+$ git log --oneline
+
+a06f865 (HEAD -> master) Revert "Adiciona function.c"
+1c43838 Adiciona graph.c
+84fde99 Adiciona function.c
+d967466 Adiciona arquivos README e hello_world.c
+aa1cf8d Adiciona README
+```
+
+### Diferença entre reset e revert
+
+A operação de reverter tem uma diferença principal quando comparada a operação de resetar. O ato de reverter não altera o histórico do projeto, sendo uma opção mais segura para os projetos que são compartilhados em um repositório remoto. Isso porque se revertemos um commit, um novo commit é criado revertendo as alterações desse commit, sem alterar o histórico do projeto. Se usamos o comando `reset`, o comportamento é bem diferente. Quando resetamos um commit, voltamos para esse commit na linha do tempo e removemos todos os commits que foram feitos depois desse commit alvo, sendo necessário commitar novamente qualquer alteração que tenha sido feita após esse determinado momento no histórico da branch. Em diversos casos, é uma operação muito custosa e inviável, por esse motivo o comando `revert` é mais utilizado no cenário citado.
 
 ### Desfazendo as modificações
 
-git checkout .
+Se executarmos o comando `git checkout` em um arquivo, caso ele esteja marcado como modificado, esse arquivo voltará ao seu estado original, ou seja, não alterado.
 
+![](assets/git-basico-na-pratica/git-checkout-commit.png)
 
-rm, remover último commit, checkout, clean -fd, apendar um commit, tudo aquilo que a gente quer desfazer ou refazer e não sabe
+Obs: também podemos usar como argumento o diretório atual através do `.` com o comando `git checkout .` e desfazer todas as modificações de uma só vez.
+
+![](assets/git-basico-na-pratica/git-checkout-ponto.png)
 
 ## Ramificações do código: trabalhando com branches
 
-branch, stash e checkout
+Os repositórios do Git possuem a estrutura de uma árvore. Quando inicializamos um repositório, ele possui apenas um ramo (branch) padrão que geralmente possui o nome de master. 
 
-## Trabalhando com repositórios remotos
+![](assets/git-basico-na-pratica/git-branch-master.png)
 
-clone, pull, fetch, push, comentário sobre perigo do push force
+Podemos pensar nas branches como caminhos diferentes que a base de código segue a partir de um ponto inicial. Esses caminhos podem ou não se encontrar em um ponto futuro.
+
+![](assets/git-basico-na-pratica/git-branches-fluxo.png)
+
+### Criando branches
+
+Durante o desenvolvimento em projetos mais robustos e com equipes maiores, é comum ter a necessidade de seguir mais de um caminho a partir da branch padrão. Por exemplo, na maioria dos projetos, a branch que possui a base de código em desenvolvimento se chama `develop`. Vamos supor que dois times necessitem, cada um, criar uma funcionalidade nova nesse projeto. Os dois times irão partir inicialmente da branch develop, cada um criando sua própria branch com seu próprio código.
+
+![](assets/git-basico-na-pratica/git-checkout-b-branch.png)
+
+Importante: o comando `git checkout -b [branch]` é equivalente a sequência de comandos `git branch [branch]` e `git checkout [branch]`, sendo uma maneira mais prática de criar e já apontar para a branch nova.
+
+### Listando as branches
+
+Podemos utilizar o comando `git branch -l` para listar as branches de um repositório.
+
+```
+$ git branch -l
+
+* develop
+  feature/login
+  feature/sign-up
+```
+
+A branch com uma marcação de destaque `*`  é a branch na qual estamos trabalhando no momento em que o comando foi rodado.
+
+### Removendo uma branch
+
+Para remover uma branch, basta utilizar o comando `git branch -d [nome]`.
+
+$ git branch -d feature/login
+
+Deleted branch feature/login (was 56bdd48).
+
+$ git branch -l
+
+* develop
+  feature/sign-up
+
+### Mesclando branches com merge
+
+https://www.atlassian.com/git/tutorials/using-branches/git-merge
+
+## Alterações temporárias e stash
+
+Muitas vezes necessitamos trocar de branch, mas temos alterações pendentes que tanto não estão concluídas a ponto de serem commitadas, como também não são tão desprezíveis para serem descartadas. Podemos resolver essas situações com o comando `git stash`. O stash possibilita guardar essas alterações para serem utilizadas novamente em outro momento.
+
+### Guardando alterações no stash
+
+Para guardar uma alteração...
+
+https://www.atlassian.com/git/tutorials/saving-changes/git-stash
 
 ## Lidando com conflitos
 
 diff, merge
 
-https://www.atlassian.com/git/tutorials/using-branches/git-merge
+## Trabalhando com repositórios remotos
+
+clone, pull, fetch, push, comentário sobre perigo do push force
 
 ## Rebase (definir um nome bom)
 
 https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
 
 pull com rebase?
-
-## Convenções de uso do Git (ver nome)
-
-git flow e trunk based development
 
 ## Extra: Usando apelidos para ganhar produtividade
 
