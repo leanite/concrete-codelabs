@@ -336,13 +336,68 @@ No segundo exemplo acima, a branch `develop` dá origem às branches `feature-1`
 
 ## Alterações temporárias e stash
 
-Muitas vezes necessitamos trocar de branch, mas temos alterações pendentes que tanto não estão concluídas a ponto de serem commitadas, como também não são tão desprezíveis para serem descartadas. Podemos resolver essas situações com o comando `git stash`. O stash possibilita guardar essas alterações para serem utilizadas novamente em outro momento.
+Muitas vezes necessitamos trocar de branch, ou até mesmo atualizar a branch que estamos trabalhando, mas temos alterações pendentes que não estão concluídas a ponto de serem commitadas e também não são desprezíveis para serem descartadas. Podemos resolver essas situações com o comando `git stash`. O stash possibilita guardar essas alterações para serem utilizadas novamente em outro momento.
 
 ### Guardando alterações no stash
 
-Para guardar uma alteração...
+Usamos o comando `git stash` para guardar as alterações de uma branch sem realizar um commit.
 
-https://www.atlassian.com/git/tutorials/saving-changes/git-stash
+![](assets/git-basico-na-pratica/git-stash.png)
+
+Por padrão, o stash não guarda arquivos não rastreados. Para forçar e guardar também esses arquivos no stash, usamos o comando adicionamos a opção `-u` de *untracked* ao comando `git stash -u`.
+
+![](assets/git-basico-na-pratica/git-stash-u.png)
+
+Os stashes são criados e armazenados em uma pilha, de forma que quando são acessados, o último stash salvo é o primeiro a ser acessado.
+
+### Listando stashes
+
+Para listar os stashes criados, basta usar o comando `git stash list`
+
+```
+$ git stash list
+
+stash@{0}: WIP on develop: fa2d54d Altera layout da tela de login
+stash@{1}: WIP on feature/sign-up: f1e7b5b Adiciona request de cadastro
+```
+
+Obs.: caso queira personalizar o seu stash para ajudar na hora de identificá-lo na listagem, basta usar o comando `git stash push -m [Mensagem]`
+
+```
+$ git stash push -m "Meu stash"
+Saved working directory and index state On develop: Meu stash
+
+$ git stash list
+
+stash@{0}: On develop: Meu stash
+```
+
+### Aplicando um stash
+
+Tanto os comandos `git stash apply` quando `git stash pop` servem para aplicar o último stash que foi criado no espaço de trabalho atual. A diferença entre os dois comandos é que o `apply` aplica e mantém o stash, enquanto o `pop` aplica e deleta o stash da pilha. Se queremos recuperar um stash específico, devemos passar o identificador dele como argumento tanto no `apply` quanto no `pop`
+
+![](assets/git-basico-na-pratica/git-stash-apply.png)
+
+### Removendo stashes
+
+Para deletar um stash, devemos seguir a mesma lógica de aplicar um stash. Se usamos apenas o comando `git stash drop`, o último stash criado é deletado, mas também podemos deletar um stash específico utilizando `git stash drop [id]`.
+
+```
+$ git stash list
+
+stash@{0}: WIP on develop: fa2d54d Altera layout da tela de login
+stash@{1}: WIP on feature/sign-up: f1e7b5b Adiciona request de cadastro
+
+$ git stash drop
+
+Dropped refs/stash@{0} (5514000d8aceda7e576feaebdf41143604794e6c)
+
+$ git stash list
+
+stash@{0}: WIP on feature/sign-up: f1e7b5b Adiciona request de cadastro
+```
+
+Para limpar todos os stashes de uma só vez, basta usar o comando `git stash clear`.
 
 ## Lidando com conflitos
 
