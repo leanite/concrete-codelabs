@@ -314,7 +314,25 @@ $ git branch -l
 
 ### Mesclando branches com merge
 
-https://www.atlassian.com/git/tutorials/using-branches/git-merge
+O merge é a forma que o Git tem de unir novamente duas branches que divergiram em certo ponto na linha do tempo do repositório. O comando `git merge [branch]` tem como alvo a **branch atual** que receberá a branch passada como argumento do comando `merge`.
+
+![](assets/git-basico-na-pratica/git-merge-default.png)
+
+No exemplo acima, a branch `feature/sign-up` foi mergeada na branch `develop`, ou seja, a `develop` foi atualizada com o código divergente presente na branch `feature/sign-up`.
+
+O merge funciona combinando uma sequência de commits em uma única linha do tempo, representada por uma única branch. Existem duas operações comuns ao mergear duas branches, o *fast forward* e o *3-way merge*.
+
+O fast forward é o caso mais simples e acontece quando uma branch é complementar a outra, ou seja, existe um caminho simples, uma diferença de adição ou subtração na linha do tempo entre uma branch e outra.
+
+![](assets/git-basico-na-pratica/git-merge-ff-fluxo.png)
+
+No exemplo acima, a branch `develop` não foi alterada desde o ponto de partida da branch `feature-1`. Quando o merge da feature-1 é realizado na develop, ocorre um *fast forward* e a HEAD da develop passa a apontar para o commit da HEAD da branch feature-1.
+
+Já o 3-way merge ocorre quando uma branch não é complementar a outra, ou seja, existe mais código do que apenas o complemento presente na branch alvo. Nesse caso, o merge é realizado gerando um commit de merge, responsável por unir os códigos das duas branches. Essa união é feita através dos últimos commits das duas branches, gerando um terceiro commit. É por conta dessa operação que o merge é chamado de 3-way.
+
+![](assets/git-basico-na-pratica/git-merge-3-way.png)
+
+No segundo exemplo acima, a branch `develop` dá origem às branches `feature-1` e `feature-2`. A `feature-1` é mergeada primeiro, fazendo com que a `develop` se torne divergente em relação à branch `feature-2`. Por isso, quando o merge da branch feature-2 na develop é realizado, é gerado um commit de merge, caracterizando um merge 3-way. 
 
 ## Alterações temporárias e stash
 
@@ -339,6 +357,8 @@ clone, pull, fetch, push, comentário sobre perigo do push force
 https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
 
 pull com rebase?
+
+https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase
 
 ## Extra: Usando apelidos para ganhar produtividade
 
