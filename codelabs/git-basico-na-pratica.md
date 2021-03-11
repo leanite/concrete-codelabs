@@ -401,7 +401,43 @@ Para limpar todos os stashes de uma só vez, basta usar o comando `git stash cle
 
 ## Lidando com conflitos
 
-diff, merge
+Quando realizamos um merge ou aplicamos um stash, existe a possibilidade de aparecerem conflitos entre o código que está no seu diretório de trabalho e o código que será aplicado ou mergeado.
+
+![](assets/git-basico-na-pratica/git-merge-conflict.png)
+
+No exemplo acima, o merge da branch `feature/sign-up` na branch `develop` falhou por um ou mais conflitos no arquivo `LoginActivity.kt`. Existem algumas abordagens para resolver esses conflitos. Quando os conflitos são resolvidos, podemos seguir normalmente adicionando e commitando as nossas alterações.
+
+### Aceitando alterações completas
+
+Se desejamos aceitar as alterações da branch `feature/sign-up` por completo, ou da branch `develop` por completo, sem mesclar essas alterações, podemos simplesmente utilizar o comando `git checkout` com os arquivos alvos.
+
+Usamos o comando `git checkout --theirs` para aceitar as alterações da branch que estamos trazendo, ou seja, a branch `feature/sign-up`. Usamos o comando `git checkout --ours` para mantermos as nossas alterações da branch que estamos atualmente, ou seja, a branch `develop`.
+
+![](assets/git-basico-na-pratica/git-merge-ours.png)
+
+### Resolvendo conflitos manualmente
+
+Quando um arquivo está em conflito, nós podemos identificar facilmente onde ocorrem esses conflitos, pois o Git destaca bastante e mantém as duas versões conflitantes no mesmo arquivo.
+
+![](assets/git-basico-na-pratica/git-merge-conflict-file.png)
+
+A estrutura de um conflito é, basicamente, a seguinte: 
+
+```
+<<<<<<< HEAD da branch atual
+
+/* bloco */
+
+=======
+
+/* bloco */
+
+>>>>>>> nome da branch que está sendo mergeada
+```
+
+Como estamos na branch `develop`, o bloco relacionado a `HEAD` é a parte do arquivo `LoginActivity.kt` que está na branch `develop`, e o outro bloco, a parte do arquivo que está na branch `feature/sign-up`.
+
+Para resolver um conflito de forma manual, basta remover o bloco que não será utilizado, removendo também os identificadores de branch e qualquer outros caractéres que fazem divisão entre os blocos.
 
 ## Trabalhando com repositórios remotos
 
