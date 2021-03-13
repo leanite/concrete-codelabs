@@ -441,13 +441,169 @@ Para resolver um conflito de forma manual, basta remover o bloco que não será 
 
 ## Trabalhando com repositórios remotos
 
-clone, pull, fetch, push, comentário sobre perigo do push force
+É uma parte muito grande da nossa rotina compartilhar código em repositórios distribuídos para vários colaboradores. Aqui falaremos das operações mais comuns, as que fazemos praticamente todos os dias.
+
+### Clonando um repositório
+
+Quando um projeto já foi criado e precisamos obter o seu código, utilizamos o comando `git clone` para obter uma cópia desse código. O argumento será uma URL SSH no formato `git@[host]:[path do repositório].git`
+
+```
+$ git clone git@github.com:concretesolutions/concrete-codelabs.git
+
+Cloning into 'concrete-codelabs'...
+remote: Enumerating objects: 1145, done.
+remote: Counting objects: 100% (1145/1145), done.
+remote: Compressing objects: 100% (754/754), done.
+remote: Total 1145 (delta 375), reused 1129 (delta 362), pack-reused 0
+Receiving objects: 100% (1145/1145), 7.55 MiB | 2.99 MiB/s, done.
+Resolving deltas: 100% (375/375), done.
+```
+
+### Configurando uma chave SSH
+
+Para clonar um repositório com sucesso, é necessário ter configurado a chave SSH da máquina que irá realizar o clone, além de, claro, ter a permissão para realizar essa operação no repositório.
+
+Se necessário, crie sua chave SSH pelo terminar utilizando o comando `ssh-keygen`. Quando perguntado, insira e confirme uma senha. Essa senha será utilizada sempre que você for realizar uma operação em um repositório remoto. Não deixe esse campo vazio!
+
+```
+$ ssh-keygen 
+
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/user/.ssh/id_rsa):
+Created directory '/home/user/.ssh'.
+
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+
+Your identification has been saved in /home/user/.ssh/id_rsa.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+The key fingerprint is:
+4c:80:61:2c:00:3f:9d:dc:08:41:2e:c0:cf:b9:17:69 user@myhost.local 
+The key's randomart image is:
++--[ RSA 2048]----+
+|*o+ooo.          |
+|.+.=o+ .         |
+|. *.* o .        |
+| . = E o         |
+|    o . S        |
+|   . .           |
+|     .           |
+|                 |
+|                 |
++-----------------+     
+```
+
+Com a chave gerada e salva, por padrão em `~/.ssh/id_rsa.pub`, pegue o seu conteúdo e aplique na sua plataforma de hospedagem de repositórios. Geralmente, existe um campo SSH Keys na parte de Settings ou Preferences da sua conta onde você pode inserir uma nova chave.
+
+### Sincronizando o repositório local
+
+Constantemente necessitamos atualizar o nosso repositório local com as modificações feitas pelos outros colaboradores. Para sincronizar o nosso repositório local, utilizamos o comando `git pull`. O comando `pull` é a combinação de outros dois comandos, o `merge` que já conhecemos e o comando `fetch`, que serve para identificar e fazer download das atualizações do repositório remoto.
+
+```
+$ git status
+
+On branch main
+Your branch is up to date with 'origin/main'.
+
+$ git pull
+
+remote: Enumerating objects: 478, done.
+remote: Counting objects: 100% (478/478), done.
+remote: Compressing objects: 100% (153/153), done.
+remote: Total 905 (delta 218), reused 443 (delta 194), pack-reused 427
+Receiving objects: 100% (905/905), 149.15 KiB | 1.24 MiB/s, done.
+Resolving deltas: 100% (306/306), completed with 91 local objects.
+From github.com:concretesolutions/concrete-codelabs
+   cbe6ffce7..4916906f1  main                -> origin/main
+
+* [new branch]          codelab-git       -> origin/codelab-git
+Updating cbe6ffce7..4916906f1
+Fast-forward
+ .../codelab.md   |  22 ++--
+ .../src/index.html         |  56 ---------
+  (...)
+ 29 files changed, 335 insertions(+), 416 deletions(-)
+
+```
+
+No exemplo acima, estamos sincronizando a nossa branch `main` local com a remota do repositório `concrete-codelabs` de `concretesolutions`.
+
+É importante ressaltar que quando temos alterações no diretório de trabalho e realizamos um pull, também será, ao fim do download das atualizações, executado um merge com o nosso trabalho local. Como é normal no fluxo de merge, caso seja encontrado algum conflito, ele será sinalizado e você deverá resolver o conflito antes de receber as atualizações que serão mergeadas com o seu trabalho.
+
+Em geral, se estamos em uma branch limpa, ou seja, sem alterações, podemos realizar um `git pull` tranquilamente. Se estamos com alteações pendentes em uma branch e queremos saber se o repositório foi atualizado por algum outro colaborador, podemos simplesmente rodar o comando `git fetch`.
+
+### Enviando código para o repositório remoto
+
+Usamos o comando `git push` para enviar as nossas atualizações para o repositório remoto. O comando, quando usado de forma simples e sem argumentos, envia os commits locais da branch atual para a branch remota.
+
+```
+$ git status
+
+On branch codelab-git
+Your branch is up to date with 'origin/codelab-git'.
+
+$ git push
+
+Counting objects: 3, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 315 bytes | 315.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To github.com:concretesolutions/concrete-codelabs.git
+   095d4b0..73361c4  codelab-git -> codelab-git
+```
+
+Caso a branch local não exista no repositório remoto, o comando simples `git push` retornará um aviso e não realizará nenhuma ação.
+
+```
+$ git status
+On branch codelab-kotlin
+nothing to commit, working tree clean
+
+$ git push
+
+fatal: The current branch codelab-kotlin has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin codelab-kotlin
+```
+
+Podemos simplesmente executar o comando sugerido e criar a branch remota e enviar o nosso código para ela deixando o repositório remoto atualizado.
+
+É importante ressaltar que toda vez que realizamos um `push`, é verificado se o repositório remoto possui alguma atualização antes de enviarmos o nosso código.
+
+```
+$ git status
+
+On branch codelab-git
+Your branch and 'origin/codelab-git' have diverged,
+and have 1 and 1 different commits each, respectively.
+  (use "git pull" to merge the remote branch into yours).
+
+$ git push 
+
+To github.com:concretesolutions/concrete-codelabs
+ ! [rejected]        codelab-git -> codelab-git (non-fast-forward)
+error: failed to push some refs to 'git@github.com:concretesolutions/concrete-codelabs'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+
+Quando isso ocorre, devemos realizar um `git pull` antes de realizar o `git push`. Ao rodar o comando `pull`, o repositório local será atualizado e também será criado um commit de merge entre as atualizações da branch remota e a nossas atualizações locais.
+
+Alguns fatores podem impedir a execução de um `git push` normalmente. Devemos sempre identificar o motivo de impedimento, resolvê-lo, e realizar novamente um pull até que consigamos enviar as nossas atualizações para o repositório remoto.
+
+Existe uma flag `--force` para forçar o `git push` e realizá-lo independente de qualquer impedimento ou bloqueio. Essa prática é extremamente desencorajada e não deve ser utilizada em grande parte dos casos, pois pode gerar desastres colaterais como perdas de commits remotos feitos por outros colaboradores.
 
 ## Rebase (definir um nome bom)
 
 https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
 
 pull com rebase?
+
+https://www.atlassian.com/git/tutorials/syncing/git-pull
 
 https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase
 
