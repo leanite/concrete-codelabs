@@ -334,6 +334,16 @@ Já o 3-way merge ocorre quando uma branch não é complementar a outra, ou seja
 
 No segundo exemplo acima, a branch `develop` dá origem às branches `feature-1` e `feature-2`. A `feature-1` é mergeada primeiro, fazendo com que a `develop` se torne divergente em relação à branch `feature-2`. Por isso, quando o merge da branch feature-2 na develop é realizado, é gerado um commit de merge, caracterizando um merge 3-way. 
 
+### Integrando alterações com rebase
+
+O rebase é a outra forma que o Git possui para unir duas branches em um repositório. O comando `git rebase [branch]` tem como alvo a **branch atual** que receberá a branch passada como argumento do comando `rebase`.
+
+Em termos de integração de código, a diferença entre o `rebase` e o `merge` é que o rebase em vez de usar um commit de mesclagem como o merge, ele reescreve a linha do tempo do projeto criando novos commits para cada commit da branch original que está sendo integrada a branch alvo atual.
+
+![](assets/git-basico-na-pratica/git-rebase-fluxo.png)
+
+É importante ressaltar: não utilize o `rebase` em branches que outras pessoas também podem estar alterando porque a chance de ocorrer uma divergência entre as branches é enorme. O rebase resulta em commits novos, isso faz com que o Git pense que o histórico da sua branch divergiu da branch de todas as outras pessoas que podem estar atuando na mesma branch.
+
 ## Alterações temporárias e stash
 
 Muitas vezes necessitamos trocar de branch, ou até mesmo atualizar a branch que estamos trabalhando, mas temos alterações pendentes que não estão concluídas a ponto de serem commitadas e também não são desprezíveis para serem descartadas. Podemos resolver essas situações com o comando `git stash`. O stash possibilita guardar essas alterações para serem utilizadas novamente em outro momento.
@@ -401,11 +411,11 @@ Para limpar todos os stashes de uma só vez, basta usar o comando `git stash cle
 
 ## Lidando com conflitos
 
-Quando realizamos um merge ou aplicamos um stash, existe a possibilidade de aparecerem conflitos entre o código que está no seu diretório de trabalho e o código que será aplicado ou mergeado.
+Quando realizamos um merge, um rebase ou aplicamos um stash, existe a possibilidade de aparecerem conflitos entre o código que está no seu diretório de trabalho e o código que será aplicado ou mergeado.
 
 ![](assets/git-basico-na-pratica/git-merge-conflict.png)
 
-No exemplo acima, o merge da branch `feature/sign-up` na branch `develop` falhou por um ou mais conflitos no arquivo `LoginActivity.kt`. Existem algumas abordagens para resolver esses conflitos. Quando os conflitos são resolvidos, podemos seguir normalmente adicionando e commitando as nossas alterações.
+No exemplo acima, o merge da branch `feature/sign-up` na branch `develop` falhou por um ou mais conflitos no arquivo `LoginActivity.kt`. Existem algumas abordagens para resolver esses conflitos. Quando os conflitos são resolvidos, podemos seguir normalmente adicionando e commitando as nossas alterações para um merge ou seguindo com o rebase.
 
 ### Aceitando alterações completas
 
@@ -532,6 +542,45 @@ No exemplo acima, estamos sincronizando a nossa branch `main` local com a remota
 
 Em geral, se estamos em uma branch limpa, ou seja, sem alterações, podemos realizar um `git pull` tranquilamente. Se estamos com alteações pendentes em uma branch e queremos saber se o repositório foi atualizado por algum outro colaborador, podemos simplesmente rodar o comando `git fetch`.
 
+Importante: se não queremos que o `git pull` faça especificamente um `merge` após o `fetch`, podemos passar a opção `--rebase` para mudar a estratégia de união de código e realizar um `rebase`.
+
+![](assets/git-basico-na-pratica/git-pull-rebase-exemplo.png)
+
+No cenário acima, temos a branch local `main` que teve seu último sincronismo no commit b. A branch remota teve outros dois commits `c` e `b'` e a local também teve dois commits `d` e `x`. Precisamos sincronizar a branch local com um `git pull`.
+
+![](assets/git-basico-na-pratica/git-pull-rebase-merge.png)
+
+Com o comando simples `git pull`, realizamos um `merge` após o `fetch` e um commit de merge é gerado, como podemos perceber no log abaixo.
+
+```
+$ git log --oneline 
+
+f2e3d22 (HEAD -> main) Merge branch 'main' of origin/main into main
+a6435d8 Add x
+eafc8e3 Add d
+8633ac9 (origin/main, origin/HEAD) Edit b
+7b1365a Add c
+9bd9f2f Add b
+2c8d668 Add a
+68036b0 Initial commit
+```
+
+![](assets/git-basico-na-pratica/git-pull-rebase-rebase.png)
+
+Já com o comando `git pull --rebase`, realizamos um `rebase` após o `fetch` e mantemos a linha do tempo original sem nenhum commit de merge, como podemos perceber no log abaixo. Reparem que a hash dos commits `Add d` e `Add x` são diferentes no `rebase` pelos motivos que já vimos anteriormente.
+
+```
+$ git log --oneline 
+
+9217307 (HEAD -> main) Add x
+cc668b8 Add d
+8633ac9 (origin/main, origin/HEAD) Edit b
+7b1365a Add c
+9bd9f2f Add b
+2c8d668 Add a
+68036b0 Initial commit
+``` 
+
 ### Enviando código para o repositório remoto
 
 Usamos o comando `git push` para enviar as nossas atualizações para o repositório remoto. O comando, quando usado de forma simples e sem argumentos, envia os commits locais da branch atual para a branch remota.
@@ -597,16 +646,256 @@ Alguns fatores podem impedir a execução de um `git push` normalmente. Devemos 
 
 Existe uma flag `--force` para forçar o `git push` e realizá-lo independente de qualquer impedimento ou bloqueio. Essa prática é extremamente desencorajada e não deve ser utilizada em grande parte dos casos, pois pode gerar desastres colaterais como perdas de commits remotos feitos por outros colaboradores.
 
-## Rebase (definir um nome bom)
+## Reescrevendo a linha do tempo
 
-https://git-scm.com/book/en/v2/Git-Internals-Git-Objects
+Uma das possibilidades mais interessantes do comando `git rebase` é poder alterar qualquer commit, de qualquer branch, na linha do tempo de um repositório. Podemos editar as mensagens de commit, unir um ou mais commits, editar um commit a ponto de incluir novos arquivos e alterações, como também deletar um commit.
 
-pull com rebase?
+Para realizar qualquer uma das tarefas citadas acima, devemos utilizar o comando `git rebase -i [commit]`, onde `commit` é o commit que servirá como base até o último commit da branch atual.
 
-https://www.atlassian.com/git/tutorials/syncing/git-pull
+Durante todos os nossos próximos exemplos, tomaremos como base o seguinte repositório:
 
-https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase
+```
+$ git status
+On branch master
+nothing to commit, working tree clean
+
+$ git log --oneline
+
+dad6037 (HEAD -> master) Add e
+ede7109 Add d
+34acf82 Add c
+346ba76 Add b
+6c8b3aa Add a
+```
+
+### Utilizando o rebase interativo
+
+Quando rodamos o comando `git rebase -i --root` na branch `master`, estamos preparando um rebase interativo na branch master desde o seu primeiro commit. Ao executar o `rebase -i`, um editor é aberto com todos os commits da branch, similar a saída de um `git log --online`.
+
+![](assets/git-basico-na-pratica/git-rebase-editor.png)
+
+O próprio Git já oferece uma cola dos possíveis comandos em um rebase interativo. Para usar um comando em um commit, edite a linha do commit que será usado, substituindo o comando `pick` pelo comando desejado. Não altere a hash ou a mensagem reduzida do commit.
+
+Vamos passar pelos principais comandos e observar os seus resultados.
+
+### Editando uma mensagem de commit
+
+O comando `reword` serve para editar a mensagem de um commit. É importante ressaltar que devemos apenas trocar o comando `pick` pelo comando `reword` do commit que queremos editar. Mudar a mensagem de commit nesse momento não terá nenhum efeito.
+
+```
+$ git rebase -i --root
+
+pick 120f0dd Add a
+reword 5402e54 Add b
+pick 98bfab1 Add c
+reword 855a2ed Add d
+pick 3e42dc0 Add e
+```
+
+Ao editar e salvar o arquivo aberto pelo `rebase -i`, dois novos arquivos aparecerão, um de cada vez, para edição contendo a mensagem de commit dos commits `5402e54` e `855a2ed`. Basta editar o arquivo e a nova mensagem de commit será salva no histórico do repositório.
+
+![](assets/git-basico-na-pratica/git-rebase-reword.png)
+
+```
+$ git rebase -i --root
+
+pick 120f0dd Add a
+pick 5402e54 Add b file
+pick 98bfab1 Add c
+pick 855a2ed Add d file
+pick 3e42dc0 Add e
+```
+
+### Unindo commits
+
+Os comandos `squash` e `fixup` servem para unir um commit alvo e o commit anterior ao alvo. Quando usamos o `squash`, aparecerá um editor após o rebase para que possamos editar a mensagem de commit do resultado da união feita pelo `squash`. Já o comando `fixup` simplesmente une o commit alvo e o seu anterior mantendo a mensagem de commit do alvo.
+
+```
+$ git rebase -i --root
+
+pick 120f0dd Add a
+pick 5402e54 Add b
+pick 98bfab1 Add c
+squash 855a2ed Add d
+pick 3e42dc0 Add e
+```
+
+![](assets/git-basico-na-pratica/git-rebase-squash.png)
+
+```
+$ git log --oneline
+
+21a457d (HEAD -> master) Add e
+8572381 Add c & Add d
+96b3961 Add b
+39c0d2a Add a
+```
+
+Se usarmos agora o comando `fixup`, o resultado será diferente e não seremos questionados sobre a mensagem de commit da união.
+
+```
+$ git rebase -i --root
+
+pick 39c0d2a Add a
+pick 96b3961 Add b
+pick 8572381 Add c & Add d
+fixup 21a457d Add e
+```
+
+Após o `fixup`, temos, então:
+
+```
+$ git log --oneline
+
+7c9c75a (HEAD -> master) Add c & Add d
+7e7a539 Add b
+002152c Add a
+```
+
+### Editando um commit
+
+Com o comando `edit`, é possível alterar, inserir novos arquivos e também remover arquivos de um commit na linha do tempo. Após salvar as alterações do rebase interativo, o Git voltará para um ponto onde será possível fazer as alterações citadas e submetê-las com um `amend` através do comando `git commit --amend`.
+
+```
+$ git rebase -i --root
+
+pick 6c8b3aa Add a
+pick 346ba76 Add b
+pick 34acf82 Add c
+edit ede7109 Add d
+pick dad6037 Add e
+```
+
+![](assets/git-basico-na-pratica/git-rebase-edit-commit.png)
+
+No exemplo acima, paramos ao editar o commit `ede7109 Add d` e adicionamos também o arquivo D ao commit. Mantivemos a mensagem de commit usando o `git commit --amend` e sinalizamos com `git rebase --continue` que encerramos a operação de edição de um commit.
+
+```
+$ git log --oneline
+
+af2a8cb (HEAD -> master) Add e
+d8b2fed Add d
+6ae4ffd Add c
+579c782 Add b
+851bba8 Add a
+
+$ ls
+
+a  b  c  d  D  e
+```
+
+### Removendo um commit
+
+O comando `drop` permite apagar um commit na linha do tempo. É importante ressaltar que ao apagar um commit, todas as suas alterações também serão apagadas!
+
+```
+$ git rebase -i --root
+
+pick 851bba8 Add a
+pick 579c782 Add b
+drop 6ae4ffd Add c
+pick d8b2fed Add d
+pick af2a8cb Add e
+```
+
+Após o rebase interativo, temos:
+
+```
+$ git log --oneline
+
+af2a8cb (HEAD -> master) Add e
+d8b2fed Add d
+579c782 Add b
+851bba8 Add a
+
+$ ls
+
+a  b  d  D  e
+```
+
+Reparem no comando `ls` que indica que o arquivo `c` também sumiu ao deletarmos o commit `6ae4ffd Add c`.
+
+Também é possível alcançar o mesmo resultado deletando a linha de commit no editor do rebase interativo em vez de substituí-la com o comando drop.
+
+```
+$ git rebase -i --root
+
+pick 851bba8 Add a
+pick 579c782 Add b
+pick d8b2fed Add d
+pick af2a8cb Add e
+
+$ git log --oneline
+
+af2a8cb (HEAD -> master) Add e
+d8b2fed Add d
+579c782 Add b
+851bba8 Add a
+
+$ ls
+
+a  b  d  D  e
+```
 
 ## Extra: Usando apelidos para ganhar produtividade
 
-https://git-scm.com/book/pt-br/v2/Fundamentos-de-Git-Apelidos-Git
+O Git possui uma grande quantidade de comandos combinados com várias opções e argumentos. Muitas vezes é muito difícil lembrar de todos. Felizmente existe a configuração de alias, que funcionam como apelidos para um comando ou parte dele no Git.
+
+Por exemplo, se não queremos lembrar, ou até mesmo ganhar produtividade ao executar o comando necessário para remover um arquivo da área de preparo, em vez de utilizar `git reset HEAD -- [arquivo]` poderíamos usar `git unstage [arquivo].
+
+Para isso, devemos configurar aliases no git através do comando `git config --global alias.[alias] [comando]`, onde `[alias]` é o apelido que queremos dar e `[comando]` o comando a ser substituído.
+
+Alguns possíveis exemplos, além do `unstage` citado acima:
+
+```
+$ git config --global alias.unstage 'reset HEAD --'
+$ git config --global alias.last 'log -1 HEAD'
+$ git config --global alias.cm 'commit -m'
+```
+
+Usando o `unstage`:
+
+```
+$ git add a
+
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	modified:   a
+
+$ git unstage a
+Unstaged changes after reset:
+M	a
+
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   a
+```
+
+Usando o `last`:
+
+```
+$ git last
+commit d263476093955a07f6dbc98c28e67333da5b378c (HEAD -> master)
+Author: Leandro Leite <l.carneiro.leite@accenture.com>
+Date:   Mon Mar 15 09:45:39 2021 -0300
+
+    Add e
+```
+
+Usando o `cm`:
+
+```
+$ git add .
+
+$ git cm "Add x"
+[master d95e5be] Add x
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 x
+```
