@@ -1,4 +1,4 @@
-summary: Git básico na prática
+summary: Git basico na prática
 id: git-basico-na-pratica
 categories: Git
 tags: treinamento, codelab
@@ -569,17 +569,15 @@ eafc8e3 Add d
 
 Já com o comando `git pull --rebase`, realizamos um `rebase` após o `fetch` e mantemos a linha do tempo original sem nenhum commit de merge, como podemos perceber no log abaixo. Reparem que a hash dos commits `Add d` e `Add x` são diferentes no `rebase` pelos motivos que já vimos anteriormente.
 
-```
-$ git log --oneline 
+    $ git log --oneline 
 
-9217307 (HEAD -> main) Add x
-cc668b8 Add d
-8633ac9 (origin/main, origin/HEAD) Edit b
-7b1365a Add c
-9bd9f2f Add b
-2c8d668 Add a
-68036b0 Initial commit
-``` 
+    9217307 (HEAD -> main) Add x
+    cc668b8 Add d
+    8633ac9 (origin/main, origin/HEAD) Edit b
+    7b1365a Add c
+    9bd9f2f Add b
+    2c8d668 Add a
+    68036b0 Initial commit
 
 ### Enviando código para o repositório remoto
 
