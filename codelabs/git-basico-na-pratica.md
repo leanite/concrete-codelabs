@@ -1,6 +1,6 @@
-summary: Git basico na prática
+summary: Git básico na prática
 id: git-basico-na-pratica
-categories: Git
+categories: Ferramentas
 tags: treinamento, codelab
 status: Published
 authors: Leandro Leite
@@ -8,29 +8,27 @@ Feedback Link: http://google.com
 
 ## O que é Git?
 
-O Git é um sistema distribuído de controle de versão utilizado pela grande maioria dos desenvolvedores atualmente. Com ele, podemos salvar nossas alterações sem de fato sobrescrever as versões anteriores, tornando possível ter um histórico de alterações de um projeto e também voltar e acessar qualquer momento e alteração específica.
+O Git é um sistema distribuído de controle de versão utilizado pela grande maioria dos desenvolvedores atualmente. Com ele, podemos salvar nossas alterações sem de fato sobrescrever as versões anteriores, tornando possível ter um histórico de alterações de um projeto e também voltar e acessar qualquer momento na linha do tempo através de uma alteração específica.
 
-Ser um sistema distribuído significa que todo desenvolvedor trabalhando em um repositório Git possui uma cópia inteira do projeto. Isso torna muito mais fácil controlar o fluxo de novas adições de código ao projeto, mesmo que elas sejam feitas por vários desenvolvedores ao mesmo tempo.
+Ser um sistema distribuído significa que todo desenvolvedor trabalhando em um repositório Git possui uma cópia inteira do projeto. Isso torna muito mais fácil controlar o fluxo de adições de código ao projeto, mesmo que elas sejam feitas por vários desenvolvedores ao mesmo tempo.
 
 ## Como funciona o Git
 
-### Repositório
+### Repositório (repo)
 
 Um repositório do Git é um diretório com um conjunto de arquivos e suas diferentes versões devido às modificações que ocorreram ao longo do tempo. Cada colaborador de um projeto tem acesso ao seu repositório para baixá-lo em sua máquina e realizar suas modificações localmente para, então, submeter essas alterações.
 
-### Pontos de verificação
+### Pontos de verificação (commits)
 
 Quase tudo no Git é feito através dos pontos de verificação do projeto, chamados de commits. Esses pontos são formados por um conjunto de alterações em um ou mais arquivos e uma mensagem que tem como objetivo descrever as modificações nesse determinado ponto.
 
-https://developer.ibm.com/technologies/web-development/tutorials/d-learn-workings-git/
+### Ramificações (branches)
 
-### Ramificações
+Uma ramificação, chamada de branch, representa uma linha de desenvolvimento independente. Podemos pensar nas branches como uma forma de criar um novo e limpo diretório de trabalho para adicionarmos nossas alterações e, em determinado momento como é comum acontecer, juntarmos em outra branch.
 
-Uma ramificação, chamada de branch, representa uma linha de desenvolvimento independente. Podemos pensar nas branches como uma forma de criar um novo e limpo diretório de trabalho para adicionarmos nossas alterações e em determinado momento, como é comum acontecer, juntarmos em outra branch.
+### Rótulos (tags)
 
-### Rótulos
-
-Um rótulo, também chamado de tag, é usado para marcar determinados pontos importantes no histórico de modificações de um repositório. É muito comum marcarmos os commits de mudanças de versão de um projeto.
+Um rótulo, também chamado de tag, é usado para marcar determinados pontos importantes no histórico de modificações de um repositório. É muito comum marcarmos os commits de mudanças de versão de um projeto, por exemplo.
 
 ### Fluxo comum de trabalho no Git
 
@@ -40,7 +38,7 @@ Vamos interpretar a imagem acima juntos!
 
 Existem 5 branches na imagem de exemplo: `master`, `develop`, `feature-A`, `bugfix` e `feature-B`. Também existem 3 tags `v1`, `v2` e `v3` na imagem, além de diversos commits representados pelos círculos em cada branch.
 
-No dia 1, o ponto inicial do projeto, a branch `master` está vazia, pois não existe nenhum release em produção, a branch `develop` tem a versão inicial com a estrutura do projeto e a branch `feature-A` teve seu início a partir do código presente na branch `develop`. A feature A é desenvolvida e, ao seu término, seu código é agregado ao código da branch `develop`, que também envia seu código para a branch `master`, gerando o release com a tag `v1`.
+No dia 1, o ponto inicial do projeto, a branch `master` está vazia, pois não existe nenhum release em produção. A branch `develop` tem a versão inicial com a estrutura do projeto e a branch `feature-A` teve seu início a partir do código presente na branch `develop`. A feature A é desenvolvida e, ao seu término, seu código é agregado ao código da branch `develop`, que também envia seu código para a branch `master`, gerando o release com a tag `v1`.
 
 Em um segundo momento, é iniciado o desenvolvimento da feature B na branch `feature-B` a partir da branch `develop`. Durante o desenvolvimento dessa feature, em um terceiro momento, um bug é encontrado na `develop` e sua correção é iniciada na branch `bugfix`. O bug é resolvido e seu código de correção é enviado para a `develop` e em seguida para a `master`, gerando o release com a tag `v2`. Repare que o bug foi resolvido antes do término da implementação da feature B e o código base da branch `develop` foi atualizado, fazendo com que a branch `feature-B` não esteja mais sincronizada com a `develop`, sendo então necessário fazer esse *sync* antes do término e envio do código para gerar o release `v3`.
 
@@ -50,18 +48,18 @@ Em um segundo momento, é iniciado o desenvolvimento da feature B na branch `fea
 
 Cada arquivo no seu diretório de trabalho, também chamado de *working directory*, pode estar em um dos dois estados: rastreado e não rastreado (untracked). Os arquivos rastreados são os que foram incluídos em um determinado ponto do repositório e possuem três estados: não modificado (unmodified), modificado (modified) e preparado (staged). Os arquivos não rastreados são aqueles que ainda não foram incluídos em nenhum ponto do repositório e também não estão na área de stage (staging area).
 
-Quando um arquivo untracked é adicionado, ele se torna um arquivo preparado, ficando na staging area aguardando o commit para se tornar um arquivo rastreado unmodified. Isso ocorre porque uma vez que o arquivo staged é commitado, o estado atual da branch passa a ser o do último commit e contém todas as últimas alterações desse arquivo, fazendo com que o mesmo se torne não modificado.
+Quando um arquivo `untracked` é adicionado, ele se torna um arquivo `staged` (preparado), ficando na staging area aguardando o commit para se tornar um arquivo `tracked` e `unmodified` (rastreado e não modificado). Isso ocorre porque uma vez que o arquivo `staged` é commitado, o estado atual da branch passa a ser o do último commit e também a conter todas as últimas alterações desse arquivo, fazendo com que o mesmo se torne `unmodified` (não modificado).
 
-Uma vez que um arquivo unmodified seja alterado, o Git o identificará como modified. Os arquivos modificados podem ser preparados, adicionados ao pacote de um commit, e se tornarem arquivos staged. Quando os arquivos que estão classificados como staged são commitados, eles se tornam unmodified pelo mesmo motivo visto no caso dos untrackeds anteriormente.
+Uma vez que um arquivo `unmodified` seja alterado, o Git o identificará como `modified`. Os arquivos modificados podem ser preparados, adicionados ao pacote de um commit, e se tornarem arquivos `staged`. Quando os arquivos que estão classificados como `staged` são commitados, eles se tornam `unmodified` pelo mesmo motivo visto no caso dos `untrackeds` anteriormente.
 
-Caso um arquivo unmodified seja removido, esse arquivo deixará de existir no diretório de trabalho, se tornando também do tipo não monitorado.
+Caso um arquivo `unmodified` seja removido, esse arquivo deixará de existir no diretório de trabalho, se tornando também do tipo `untracked` (não monitorado).
 
 ## Configuração inicial
 
 
 ### Instalação
 
-Caso ainda não tenha o Git instalado, basta usar o comando `sudo apt install git` para realizar a instalação no Ubuntu.
+Caso ainda não tenha o Git instalado, basta usar o comando `sudo apt install git` para realizar a sua instalação no Ubuntu.
 
 ### Sua Identidade
 
@@ -76,7 +74,7 @@ Importante: a opção `--global` garante que seu usuário e e-mail serão usados
 
 ### Configurando o editor padrão
 
-Podemos escolher o editor de texto padrão que será utilizado quando o Git precisar que editemos uma mensagem. Se não for configurado, o Git usará o editor padrão, que pode variar de acordo com o Sistema Operacional. Para configurar o editor de texto padrão, basta usar o comando abaixo:
+Podemos escolher o editor de texto padrão que será utilizado quando o Git precisar que editemos uma mensagem ou um arquivo texto. Se não for configurado, o Git usará o editor padrão, que pode variar de acordo com o Sistema Operacional. Para configurar o editor de texto padrão, basta usar o comando abaixo:
 
 ```
 $ git config --global core.editor [seu editor aqui]
@@ -86,13 +84,13 @@ $ git config --global core.editor [seu editor aqui]
 
 ### Inicializando um repositório local
 
-Para inicializar um repositório vazio, basta utilizar o comando `git init` no diretório em que deseja criar o repositório. Um novo subdiretório oculto `.git` será criado, contendo todos os arquivos e a estrutura de diretórios internos necessários para o versionamento do seu repositório funcionar corretamente.
+Para inicializar um repositório vazio, basta utilizar o comando `git init` no diretório em que deseja criar o repositório. Um novo subdiretório oculto `.git` será criado com todos os arquivos e a estrutura de diretórios internos necessários para o versionamento do seu repositório funcionar corretamente.
 
 ![](assets/git-basico-na-pratica/git-init.png)
 
 ### Estado atual do repositório
 
-O comando `git status` nos informa como está o estado atual do nosso repositório, ou seja, em que `branch` estamos operando, se existe algum arquivo novo ou alterado, se existem arquivos preparados para serem commitados, se estamos sincronizados com o repositório, entre outras possibilidades.
+O comando `git status` nos informa como está o estado atual do nosso repositório remoto, ou seja, em que `branch` estamos operando, se existe algum arquivo novo ou alterado, se existem arquivos preparados para serem commitados, se estamos sincronizados com o repositório, entre outras possibilidades.
 
 ![](assets/git-basico-na-pratica/git-status.png)
 
@@ -110,7 +108,7 @@ Após prepararmos os arquivos, usamos o comando `git commit` para submeter as no
 
 ![](assets/git-basico-na-pratica/git-commit.png)
 
-Em resumo, é da forma a seguir que ocorrem as mudanças de estado no Git.
+Em resumo, é da forma a seguir que ocorrem as mudanças de estado no Git:
 
 ![](assets/git-basico-na-pratica/git-estados.png)
 
@@ -120,7 +118,7 @@ Para acessar o histórico de commits, podemos usar o comando `git log`.
 
 ![](assets/git-basico-na-pratica/git-log-normal.png)
 
-Podemos adicionar algumas opções ao comando para filtrar ou facilitar a visualização do histórico de commits. Por exemplo, se adicionarmos a opção `--oneline`, mostramos o histórico de commits de forma simplificada.
+Podemos adicionar algumas opções ao comando para filtrar ou facilitar a visualização do histórico de commits. Por exemplo, se adicionarmos a opção `--oneline`, o comando mostra o histórico de commits de forma simplificada.
 
 `git log --oneline`
 
@@ -138,15 +136,15 @@ Muitas vezes queremos saber o histórico de alterações de um arquivo do nosso 
 
 ### Escrevendo mensagens de commit nos padrões da comunidade
 
-Uma mensagem de commit é dividida em, pelo menos, duas partes importantes: assunto e corpo da mensagem. Um commit deve ter, pelo menos, o assunto da mensagem, que **não deve exceder 50 caracteres**. Um indicativo de que o commit necessita de um corpo de mensagem é que seu assunto está estourando os seu limite de 50 caracteres. Algumas comunidades aumentam esse limite de 50 caracteres para 72 caracteres, mas nunca excedem o limite de 72 caracteres.
+Uma mensagem de commit é dividida em, pelo menos, duas partes importantes: assunto e corpo da mensagem. Um commit deve ter, pelo menos, o assunto da mensagem, que **não deve exceder 50 caracteres**. Um indicativo de que o commit necessita de um corpo de mensagem é que seu assunto está estourando o seu limite de 50 caracteres. Algumas comunidades aumentam esse limite de 50 caracteres para 72 caracteres, mas nunca excedem o limite de 72 caracteres.
 
-O assunto do commit tem algumas particularidades importantes que devem ser respeitadas. A principal é o seu modo verbal, todo assunto de commit é escrito de forma imperativa. Por exemplo, não escrevemos "Corrigindo bug #234" ou "Corrigimos bug #234", e sim **"Corrige o bug #234!**. Além disso, existe o limite de 50 a 72 caracteres que falamos anteriormente, a convenção de pular uma linha entre o assunto e o corpo da mensagem e não usar ponto final no assunto do commit.
+O assunto do commit tem algumas particularidades importantes que devem ser respeitadas. A principal é o seu modo verbal, todo assunto de commit é escrito de forma imperativa. Por exemplo, não escrevemos "Corrigindo bug #234" ou "Corrigimos bug #234", e sim **"Corrige o bug #234"**. Além disso, existe o limite de 50 a 72 caracteres que falamos anteriormente, a convenção de pular uma linha entre o assunto e o corpo da mensagem e não usar ponto final no assunto do commit.
 
 Sobre o corpo do commit, não existe uma convenção sobre o tamanho total do corpo. Ele pode ser tão detalhado quanto um determinado commit necessitar, porém é uma boa prática, e um pedido da comunidade, quebrar linhas a cada 80 caracteres para facilitar a leitura em um terminal clássico.
 
 O motivo para todas essas regras é garantir a legibilidade e o entendimento quando determinada pessoa revisitar o seu commit. Ela irá ler a sua mensagem de commit para descobrir o que aconteceu com o código naquele exato momento. Por exemplo:
 
-    Se aplicado, o que faz o commit d967462?
+Se aplicado, o que faz o commit d967462?
 
     commit d967462 (HEAD -> master)
     Author: Leandro Leite <leandro.leite@concrete.com.br>
@@ -209,7 +207,7 @@ Ao acessar um commit específico, recebemos a mensagem que estamos em no estado 
 
 HEAD é um ponteiro que referencia um objeto de commit. Por padrão, quando está em um estado normal, essa referência é o último commit feito em uma branch. Quando a HEAD aponta para um commit sem referência, como por exemplo um commit histórico em uma branch, ela entra em estado *detached*.
 
-Como, geralmente, a HEAD aponta para o último commit de uma branch, é muito comum utilizarmos o modificador `~` quando utilizamos essa referência. Esse modificador significa, basicamente, parente de um determinado grau. Por exemplo, a referência `HEAD~1` significa parente de primeiro grau do último commit de uma branch, ou seja, seu penúltimo commit. Da mesma forma que `HEAD~N` é o parante do n-ésimo grau do último commit.
+Como, geralmente, a HEAD aponta para o último commit de uma branch, é muito comum utilizarmos o modificador `~` quando utilizamos essa referência. Esse modificador significa, basicamente, parente de um determinado grau. Por exemplo, a referência `HEAD~1` significa parente de primeiro grau do último commit de uma branch, ou seja, seu penúltimo commit. Da mesma forma que `HEAD~N` é o parante de n-ésimo grau do último commit.
 
 ```
 $ git log --oneline
@@ -255,13 +253,13 @@ aa1cf8d Adiciona README
 
 ### Diferença entre reset e revert
 
-A operação de reverter tem uma diferença principal quando comparada a operação de resetar. O ato de reverter não altera o histórico do projeto, sendo uma opção mais segura para os projetos que são compartilhados em um repositório remoto. Isso porque se revertemos um commit, um novo commit é criado revertendo as alterações desse commit, sem alterar o histórico do projeto. Se usamos o comando `reset`, o comportamento é bem diferente. Quando resetamos um commit, voltamos para esse commit na linha do tempo e removemos todos os commits que foram feitos depois desse commit alvo, sendo necessário commitar novamente qualquer alteração que tenha sido feita após esse determinado momento no histórico da branch. Em diversos casos, é uma operação muito custosa e inviável, por esse motivo o comando `revert` é mais utilizado no cenário citado.
+A operação de reverter tem uma diferença principal quando comparada à operação de resetar. O ato de reverter não altera o histórico do projeto, sendo uma opção mais segura para os projetos que são compartilhados em um repositório remoto. Isso porque se revertemos um commit, um novo commit é criado revertendo as alterações desse commit, sem alterar o histórico do projeto. Se usamos o comando `reset`, o comportamento é bem diferente. Quando resetamos um commit, voltamos para esse commit na linha do tempo e removemos todos os commits que foram feitos depois desse commit alvo, sendo necessário commitar novamente qualquer alteração que tenha sido feita após esse determinado momento no histórico da branch. Em diversos casos, é uma operação muito custosa e inviável, por esse motivo o comando `revert` é mais utilizado no cenário citado.
 
 ### Desfazendo as modificações
 
 Se executarmos o comando `git checkout` em um arquivo, caso ele esteja marcado como modificado, esse arquivo voltará ao seu estado original, ou seja, não alterado.
 
-![](assets/git-basico-na-pratica/git-checkout-commit.png)
+![](assets/git-basico-na-pratica/git-checkout-file.png)
 
 Obs: também podemos usar como argumento o diretório atual através do `.` com o comando `git checkout .` e desfazer todas as modificações de uma só vez.
 
@@ -269,7 +267,7 @@ Obs: também podemos usar como argumento o diretório atual através do `.` com 
 
 ## Ramificações do código: trabalhando com branches
 
-Os repositórios do Git possuem a estrutura de uma árvore. Quando inicializamos um repositório, ele possui apenas um ramo (branch) padrão que geralmente possui o nome de master. 
+Os repositórios do Git possuem a estrutura de uma árvore. Quando inicializamos um repositório, ele possui apenas um ramo (branch) padrão que geralmente possui o nome de master ou main. 
 
 ![](assets/git-basico-na-pratica/git-branch-master.png)
 
@@ -303,14 +301,20 @@ A branch com uma marcação de destaque `*`  é a branch na qual estamos trabalh
 
 Para remover uma branch, basta utilizar o comando `git branch -d [nome]`.
 
-$ git branch -d feature/login
+    $ git branch -l
 
-Deleted branch feature/login (was 56bdd48).
+    * develop
+      feature/login
+      feature/sign-up
 
-$ git branch -l
+    $ git branch -d feature/login
 
-* develop
-  feature/sign-up
+    Deleted branch feature/login (was 56bdd48).
+
+    $ git branch -l
+
+    * develop
+      feature/sign-up
 
 ### Mesclando branches com merge
 
@@ -342,7 +346,7 @@ Em termos de integração de código, a diferença entre o `rebase` e o `merge` 
 
 ![](assets/git-basico-na-pratica/git-rebase-fluxo.png)
 
-É importante ressaltar: não utilize o `rebase` em branches que outras pessoas também podem estar alterando porque a chance de ocorrer uma divergência entre as branches é enorme. O rebase resulta em commits novos, isso faz com que o Git pense que o histórico da sua branch divergiu da branch de todas as outras pessoas que podem estar atuando na mesma branch.
+É importante ressaltar: não utilize o `rebase` em branches que outras pessoas também podem estar alterando. A chance de ocorrer uma divergência entre as branches é enorme. O rebase resulta em commits novos e isso faz com que o Git pense que o histórico da sua branch divergiu da branch de todas as outras pessoas que podem estar atuando na mesma branch.
 
 ## Alterações temporárias e stash
 
@@ -390,7 +394,7 @@ Tanto os comandos `git stash apply` quando `git stash pop` servem para aplicar o
 
 ### Removendo stashes
 
-Para deletar um stash, devemos seguir a mesma lógica de aplicar um stash. Se usamos apenas o comando `git stash drop`, o último stash criado é deletado, mas também podemos deletar um stash específico utilizando `git stash drop [id]`.
+Para deletar um stash, devemos seguir a mesma lógica de aplicar um stash. Se usarmos apenas o comando `git stash drop`, o último stash criado é deletado. Também podemos deletar um stash específico utilizando `git stash drop [id]`.
 
 ```
 $ git stash list
@@ -447,7 +451,7 @@ A estrutura de um conflito é, basicamente, a seguinte:
 
 Como estamos na branch `develop`, o bloco relacionado a `HEAD` é a parte do arquivo `LoginActivity.kt` que está na branch `develop`, e o outro bloco, a parte do arquivo que está na branch `feature/sign-up`.
 
-Para resolver um conflito de forma manual, basta remover o bloco que não será utilizado, removendo também os identificadores de branch e qualquer outros caractéres que fazem divisão entre os blocos.
+Para resolver um conflito de forma manual, basta remover o bloco que não será utilizado, removendo também os identificadores de branch e qualquer outros caracteres que fazem divisão entre os blocos.
 
 ## Trabalhando com repositórios remotos
 
@@ -835,11 +839,11 @@ $ ls
 a  b  d  D  e
 ```
 
-## Extra: Usando apelidos para ganhar produtividade
+## Extra: usando apelidos para ganhar produtividade
 
-O Git possui uma grande quantidade de comandos combinados com várias opções e argumentos. Muitas vezes é muito difícil lembrar de todos. Felizmente existe a configuração de alias, que funcionam como apelidos para um comando ou parte dele no Git.
+O Git possui uma grande quantidade de comandos combinados com várias opções e argumentos. Muitas vezes é difícil lembrar de todos. Felizmente existe a configuração de alias, que funciona como apelidos para um comando ou parte dele no Git.
 
-Por exemplo, se não queremos lembrar, ou até mesmo ganhar produtividade ao executar o comando necessário para remover um arquivo da área de preparo, em vez de utilizar `git reset HEAD -- [arquivo]` poderíamos usar `git unstage [arquivo].
+Por exemplo, se não queremos lembrar, ou até mesmo ganhar produtividade ao executar o comando necessário para remover um arquivo da área de preparo, em vez de utilizar `git reset HEAD -- [arquivo]` poderíamos usar `git unstage [arquivo]`.
 
 Para isso, devemos configurar aliases no git através do comando `git config --global alias.[alias] [comando]`, onde `[alias]` é o apelido que queremos dar e `[comando]` o comando a ser substituído.
 

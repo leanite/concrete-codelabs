@@ -28,41 +28,40 @@
                   feedback-link="http://google.com">
     
       <google-codelab-step label="O que é Git?" duration="0">
-        <p>O Git é um sistema distribuído de controle de versão utilizado pela grande maioria dos desenvolvedores atualmente. Com ele, podemos salvar nossas alterações sem de fato sobrescrever as versões anteriores, tornando possível ter um histórico de alterações de um projeto e também voltar e acessar qualquer momento e alteração específica.</p>
-<p>Ser um sistema distribuído significa que todo desenvolvedor trabalhando em um repositório Git possui uma cópia inteira do projeto. Isso torna muito mais fácil controlar o fluxo de novas adições de código ao projeto, mesmo que elas sejam feitas por vários desenvolvedores ao mesmo tempo.</p>
+        <p>O Git é um sistema distribuído de controle de versão utilizado pela grande maioria dos desenvolvedores atualmente. Com ele, podemos salvar nossas alterações sem de fato sobrescrever as versões anteriores, tornando possível ter um histórico de alterações de um projeto e também voltar e acessar qualquer momento na linha do tempo através de uma alteração específica.</p>
+<p>Ser um sistema distribuído significa que todo desenvolvedor trabalhando em um repositório Git possui uma cópia inteira do projeto. Isso torna muito mais fácil controlar o fluxo de adições de código ao projeto, mesmo que elas sejam feitas por vários desenvolvedores ao mesmo tempo.</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Como funciona o Git" duration="0">
-        <h2 is-upgraded>Repositório</h2>
+        <h2 is-upgraded>Repositório (repo)</h2>
 <p>Um repositório do Git é um diretório com um conjunto de arquivos e suas diferentes versões devido às modificações que ocorreram ao longo do tempo. Cada colaborador de um projeto tem acesso ao seu repositório para baixá-lo em sua máquina e realizar suas modificações localmente para, então, submeter essas alterações.</p>
-<h2 is-upgraded>Pontos de verificação</h2>
+<h2 is-upgraded>Pontos de verificação (commits)</h2>
 <p>Quase tudo no Git é feito através dos pontos de verificação do projeto, chamados de commits. Esses pontos são formados por um conjunto de alterações em um ou mais arquivos e uma mensagem que tem como objetivo descrever as modificações nesse determinado ponto.</p>
-<p>https://developer.ibm.com/technologies/web-development/tutorials/d-learn-workings-git/</p>
-<h2 is-upgraded>Ramificações</h2>
-<p>Uma ramificação, chamada de branch, representa uma linha de desenvolvimento independente. Podemos pensar nas branches como uma forma de criar um novo e limpo diretório de trabalho para adicionarmos nossas alterações e em determinado momento, como é comum acontecer, juntarmos em outra branch.</p>
-<h2 is-upgraded>Rótulos</h2>
-<p>Um rótulo, também chamado de tag, é usado para marcar determinados pontos importantes no histórico de modificações de um repositório. É muito comum marcarmos os commits de mudanças de versão de um projeto.</p>
+<h2 is-upgraded>Ramificações (branches)</h2>
+<p>Uma ramificação, chamada de branch, representa uma linha de desenvolvimento independente. Podemos pensar nas branches como uma forma de criar um novo e limpo diretório de trabalho para adicionarmos nossas alterações e, em determinado momento como é comum acontecer, juntarmos em outra branch.</p>
+<h2 is-upgraded>Rótulos (tags)</h2>
+<p>Um rótulo, também chamado de tag, é usado para marcar determinados pontos importantes no histórico de modificações de um repositório. É muito comum marcarmos os commits de mudanças de versão de um projeto, por exemplo.</p>
 <h2 is-upgraded>Fluxo comum de trabalho no Git</h2>
 <p class="image-container"><img src="img/84f81b4dee427212.png"></p>
 <p>Vamos interpretar a imagem acima juntos!</p>
 <p>Existem 5 branches na imagem de exemplo: <code>master</code>, <code>develop</code>, <code>feature-A</code>, <code>bugfix</code> e <code>feature-B</code>. Também existem 3 tags <code>v1</code>, <code>v2</code> e <code>v3</code> na imagem, além de diversos commits representados pelos círculos em cada branch.</p>
-<p>No dia 1, o ponto inicial do projeto, a branch <code>master</code> está vazia, pois não existe nenhum release em produção, a branch <code>develop</code> tem a versão inicial com a estrutura do projeto e a branch <code>feature-A</code> teve seu início a partir do código presente na branch <code>develop</code>. A feature A é desenvolvida e, ao seu término, seu código é agregado ao código da branch <code>develop</code>, que também envia seu código para a branch <code>master</code>, gerando o release com a tag <code>v1</code>.</p>
+<p>No dia 1, o ponto inicial do projeto, a branch <code>master</code> está vazia, pois não existe nenhum release em produção. A branch <code>develop</code> tem a versão inicial com a estrutura do projeto e a branch <code>feature-A</code> teve seu início a partir do código presente na branch <code>develop</code>. A feature A é desenvolvida e, ao seu término, seu código é agregado ao código da branch <code>develop</code>, que também envia seu código para a branch <code>master</code>, gerando o release com a tag <code>v1</code>.</p>
 <p>Em um segundo momento, é iniciado o desenvolvimento da feature B na branch <code>feature-B</code> a partir da branch <code>develop</code>. Durante o desenvolvimento dessa feature, em um terceiro momento, um bug é encontrado na <code>develop</code> e sua correção é iniciada na branch <code>bugfix</code>. O bug é resolvido e seu código de correção é enviado para a <code>develop</code> e em seguida para a <code>master</code>, gerando o release com a tag <code>v2</code>. Repare que o bug foi resolvido antes do término da implementação da feature B e o código base da branch <code>develop</code> foi atualizado, fazendo com que a branch <code>feature-B</code> não esteja mais sincronizada com a <code>develop</code>, sendo então necessário fazer esse <em>sync</em> antes do término e envio do código para gerar o release <code>v3</code>.</p>
 <h2 is-upgraded>Ciclo de vida e estados dos arquivos no Git</h2>
 <p class="image-container"><img src="img/e34510b60f9668db.png"></p>
 <p>Cada arquivo no seu diretório de trabalho, também chamado de <em>working directory</em>, pode estar em um dos dois estados: rastreado e não rastreado (untracked). Os arquivos rastreados são os que foram incluídos em um determinado ponto do repositório e possuem três estados: não modificado (unmodified), modificado (modified) e preparado (staged). Os arquivos não rastreados são aqueles que ainda não foram incluídos em nenhum ponto do repositório e também não estão na área de stage (staging area).</p>
-<p>Quando um arquivo untracked é adicionado, ele se torna um arquivo preparado, ficando na staging area aguardando o commit para se tornar um arquivo rastreado unmodified. Isso ocorre porque uma vez que o arquivo staged é commitado, o estado atual da branch passa a ser o do último commit e contém todas as últimas alterações desse arquivo, fazendo com que o mesmo se torne não modificado.</p>
-<p>Uma vez que um arquivo unmodified seja alterado, o Git o identificará como modified. Os arquivos modificados podem ser preparados, adicionados ao pacote de um commit, e se tornarem arquivos staged. Quando os arquivos que estão classificados como staged são commitados, eles se tornam unmodified pelo mesmo motivo visto no caso dos untrackeds anteriormente.</p>
-<p>Caso um arquivo unmodified seja removido, esse arquivo deixará de existir no diretório de trabalho, se tornando também do tipo não monitorado.</p>
+<p>Quando um arquivo <code>untracked</code> é adicionado, ele se torna um arquivo <code>staged</code> (preparado), ficando na staging area aguardando o commit para se tornar um arquivo <code>tracked</code> e <code>unmodified</code> (rastreado e não modificado). Isso ocorre porque uma vez que o arquivo <code>staged</code> é commitado, o estado atual da branch passa a ser o do último commit e também a conter todas as últimas alterações desse arquivo, fazendo com que o mesmo se torne <code>unmodified</code> (não modificado).</p>
+<p>Uma vez que um arquivo <code>unmodified</code> seja alterado, o Git o identificará como <code>modified</code>. Os arquivos modificados podem ser preparados, adicionados ao pacote de um commit, e se tornarem arquivos <code>staged</code>. Quando os arquivos que estão classificados como <code>staged</code> são commitados, eles se tornam <code>unmodified</code> pelo mesmo motivo visto no caso dos <code>untrackeds</code> anteriormente.</p>
+<p>Caso um arquivo <code>unmodified</code> seja removido, esse arquivo deixará de existir no diretório de trabalho, se tornando também do tipo <code>untracked</code> (não monitorado).</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Configuração inicial" duration="0">
         <h2 is-upgraded>Instalação</h2>
-<p>Caso ainda não tenha o Git instalado, basta usar o comando <code>sudo apt install git</code> para realizar a instalação no Ubuntu.</p>
+<p>Caso ainda não tenha o Git instalado, basta usar o comando <code>sudo apt install git</code> para realizar a sua instalação no Ubuntu.</p>
 <h2 is-upgraded>Sua Identidade</h2>
 <p>A primeira coisa que você deve fazer ao instalar Git é configurar seu nome de usuário e endereço de e-mail. Esses dados são usados a cada commit para determinar a sua autoria. Podemos fazer isso através dos comandos abaixo:</p>
 <pre><code>$ git config --global user.name &#34;Fulano de Tal&#34;
@@ -70,7 +69,7 @@ $ git config --global user.email fulanodetal@exemplo.br
 </code></pre>
 <p>Importante: a opção <code>--global</code> garante que seu usuário e e-mail serão usados, por padrão, em todos os repositórios em que você commitar. Caso seja necessário alterar essas informações para um repositório específico, basta ir até o diretório desse repositório e executar os comandos acima sem a opção <code>--global</code>.</p>
 <h2 is-upgraded>Configurando o editor padrão</h2>
-<p>Podemos escolher o editor de texto padrão que será utilizado quando o Git precisar que editemos uma mensagem. Se não for configurado, o Git usará o editor padrão, que pode variar de acordo com o Sistema Operacional. Para configurar o editor de texto padrão, basta usar o comando abaixo:</p>
+<p>Podemos escolher o editor de texto padrão que será utilizado quando o Git precisar que editemos uma mensagem ou um arquivo texto. Se não for configurado, o Git usará o editor padrão, que pode variar de acordo com o Sistema Operacional. Para configurar o editor de texto padrão, basta usar o comando abaixo:</p>
 <pre><code>$ git config --global core.editor [seu editor aqui]
 </code></pre>
 
@@ -79,10 +78,10 @@ $ git config --global user.email fulanodetal@exemplo.br
     
       <google-codelab-step label="Operações fundamentais" duration="0">
         <h2 is-upgraded>Inicializando um repositório local</h2>
-<p>Para inicializar um repositório vazio, basta utilizar o comando <code>git init</code> no diretório em que deseja criar o repositório. Um novo subdiretório oculto <code>.git</code> será criado, contendo todos os arquivos e a estrutura de diretórios internos necessários para o versionamento do seu repositório funcionar corretamente.</p>
+<p>Para inicializar um repositório vazio, basta utilizar o comando <code>git init</code> no diretório em que deseja criar o repositório. Um novo subdiretório oculto <code>.git</code> será criado com todos os arquivos e a estrutura de diretórios internos necessários para o versionamento do seu repositório funcionar corretamente.</p>
 <p class="image-container"><img src="img/93f2fa877d3bc6ca.png"></p>
 <h2 is-upgraded>Estado atual do repositório</h2>
-<p>O comando <code>git status</code> nos informa como está o estado atual do nosso repositório, ou seja, em que <code>branch</code> estamos operando, se existe algum arquivo novo ou alterado, se existem arquivos preparados para serem commitados, se estamos sincronizados com o repositório, entre outras possibilidades.</p>
+<p>O comando <code>git status</code> nos informa como está o estado atual do nosso repositório remoto, ou seja, em que <code>branch</code> estamos operando, se existe algum arquivo novo ou alterado, se existem arquivos preparados para serem commitados, se estamos sincronizados com o repositório, entre outras possibilidades.</p>
 <p class="image-container"><img src="img/a62ff996a5712484.png"></p>
 <h2 is-upgraded>Gravando alterações no repositório</h2>
 <p>O comando <code>git add</code> adiciona arquivos do diretório de trabalho, tanto rastreados e modificados quanto os não rastreados, à área de stage. Quando adicionamos arquivos, eles se tornam preparados para serem commitados.</p>
@@ -91,12 +90,12 @@ $ git config --global user.email fulanodetal@exemplo.br
 <p>Importante: ao usar <code>git add .</code> devemos sempre ter a atenção de avaliar com o comando <code>git status</code> se realmente todos os arquivos que estão marcados como novos ou alterados devem ser de fato preparados para o commit.</p>
 <p>Após prepararmos os arquivos, usamos o comando <code>git commit</code> para submeter as nossas alterações ao repositório. É aberto o editor padrão para que possamos escrever a mensagem de commit, que é obrigatória e sem ela o commit é cancelado. Podemos utilizar também o comando <code>git commit -m [mensagem]</code> para realizar um commit com a mensagem <code>[mensagem]</code> sem ter que abrir o editor padrão, de forma mais rápida e prática.</p>
 <p class="image-container"><img src="img/4eb9c457b78f0a8e.png"></p>
-<p>Em resumo, é da forma a seguir que ocorrem as mudanças de estado no Git.</p>
+<p>Em resumo, é da forma a seguir que ocorrem as mudanças de estado no Git:</p>
 <p class="image-container"><img src="img/79a8573268d1559f.png"></p>
 <h2 is-upgraded>Acessando o histórico de commits</h2>
 <p>Para acessar o histórico de commits, podemos usar o comando <code>git log</code>.</p>
 <p class="image-container"><img src="img/3a378a6126150316.png"></p>
-<p>Podemos adicionar algumas opções ao comando para filtrar ou facilitar a visualização do histórico de commits. Por exemplo, se adicionarmos a opção <code>--oneline</code>, mostramos o histórico de commits de forma simplificada.</p>
+<p>Podemos adicionar algumas opções ao comando para filtrar ou facilitar a visualização do histórico de commits. Por exemplo, se adicionarmos a opção <code>--oneline</code>, o comando mostra o histórico de commits de forma simplificada.</p>
 <p><code>git log --oneline</code></p>
 <p class="image-container"><img src="img/430d9bc534230fbf.png"></p>
 <p>Também podemos filtrar os commits por autor utilizando a opção <code>--author</code> como em <code>git log --author=Pedro</code>:</p>
@@ -109,13 +108,12 @@ $ git config --global user.email fulanodetal@exemplo.br
     
       <google-codelab-step label="Fazendo bons commits" duration="0">
         <h2 is-upgraded>Escrevendo mensagens de commit nos padrões da comunidade</h2>
-<p>Uma mensagem de commit é dividida em, pelo menos, duas partes importantes: assunto e corpo da mensagem. Um commit deve ter, pelo menos, o assunto da mensagem, que <strong>não deve exceder 50 caracteres</strong>. Um indicativo de que o commit necessita de um corpo de mensagem é que seu assunto está estourando os seu limite de 50 caracteres. Algumas comunidades aumentam esse limite de 50 caracteres para 72 caracteres, mas nunca excedem o limite de 72 caracteres.</p>
-<p>O assunto do commit tem algumas particularidades importantes que devem ser respeitadas. A principal é o seu modo verbal, todo assunto de commit é escrito de forma imperativa. Por exemplo, não escrevemos &#34;Corrigindo bug #234&#34; ou &#34;Corrigimos bug #234&#34;, e sim <strong>&#34;Corrige o bug #234!</strong>. Além disso, existe o limite de 50 a 72 caracteres que falamos anteriormente, a convenção de pular uma linha entre o assunto e o corpo da mensagem e não usar ponto final no assunto do commit.</p>
+<p>Uma mensagem de commit é dividida em, pelo menos, duas partes importantes: assunto e corpo da mensagem. Um commit deve ter, pelo menos, o assunto da mensagem, que <strong>não deve exceder 50 caracteres</strong>. Um indicativo de que o commit necessita de um corpo de mensagem é que seu assunto está estourando o seu limite de 50 caracteres. Algumas comunidades aumentam esse limite de 50 caracteres para 72 caracteres, mas nunca excedem o limite de 72 caracteres.</p>
+<p>O assunto do commit tem algumas particularidades importantes que devem ser respeitadas. A principal é o seu modo verbal, todo assunto de commit é escrito de forma imperativa. Por exemplo, não escrevemos &#34;Corrigindo bug #234&#34; ou &#34;Corrigimos bug #234&#34;, e sim <strong>&#34;Corrige o bug #234&#34;</strong>. Além disso, existe o limite de 50 a 72 caracteres que falamos anteriormente, a convenção de pular uma linha entre o assunto e o corpo da mensagem e não usar ponto final no assunto do commit.</p>
 <p>Sobre o corpo do commit, não existe uma convenção sobre o tamanho total do corpo. Ele pode ser tão detalhado quanto um determinado commit necessitar, porém é uma boa prática, e um pedido da comunidade, quebrar linhas a cada 80 caracteres para facilitar a leitura em um terminal clássico.</p>
 <p>O motivo para todas essas regras é garantir a legibilidade e o entendimento quando determinada pessoa revisitar o seu commit. Ela irá ler a sua mensagem de commit para descobrir o que aconteceu com o código naquele exato momento. Por exemplo:</p>
-<pre><code>Se aplicado, o que faz o commit d967462?
-
-commit d967462 (HEAD -&gt; master)
+<p>Se aplicado, o que faz o commit d967462?</p>
+<pre><code>commit d967462 (HEAD -&gt; master)
 Author: Leandro Leite &lt;leandro.leite@concrete.com.br&gt;
 Date:   Tue Feb 23 18:30:00 2021 -0300
 
@@ -157,7 +155,7 @@ Date:   Tue Feb 23 18:30:00 2021 -0300
 <p class="image-container"><img src="img/d3951fe3b278faa3.png"></p>
 <h2 is-upgraded>A referência HEAD</h2>
 <p>HEAD é um ponteiro que referencia um objeto de commit. Por padrão, quando está em um estado normal, essa referência é o último commit feito em uma branch. Quando a HEAD aponta para um commit sem referência, como por exemplo um commit histórico em uma branch, ela entra em estado <em>detached</em>.</p>
-<p>Como, geralmente, a HEAD aponta para o último commit de uma branch, é muito comum utilizarmos o modificador <code>~</code> quando utilizamos essa referência. Esse modificador significa, basicamente, parente de um determinado grau. Por exemplo, a referência <code>HEAD~1</code> significa parente de primeiro grau do último commit de uma branch, ou seja, seu penúltimo commit. Da mesma forma que <code>HEAD~N</code> é o parante do n-ésimo grau do último commit.</p>
+<p>Como, geralmente, a HEAD aponta para o último commit de uma branch, é muito comum utilizarmos o modificador <code>~</code> quando utilizamos essa referência. Esse modificador significa, basicamente, parente de um determinado grau. Por exemplo, a referência <code>HEAD~1</code> significa parente de primeiro grau do último commit de uma branch, ou seja, seu penúltimo commit. Da mesma forma que <code>HEAD~N</code> é o parante de n-ésimo grau do último commit.</p>
 <pre><code>$ git log --oneline
 
 84fde99 (HEAD -&gt; master) Adiciona function.c
@@ -195,10 +193,10 @@ d967466 Adiciona arquivos README e hello_world.c
 aa1cf8d Adiciona README
 </code></pre>
 <h2 is-upgraded>Diferença entre reset e revert</h2>
-<p>A operação de reverter tem uma diferença principal quando comparada a operação de resetar. O ato de reverter não altera o histórico do projeto, sendo uma opção mais segura para os projetos que são compartilhados em um repositório remoto. Isso porque se revertemos um commit, um novo commit é criado revertendo as alterações desse commit, sem alterar o histórico do projeto. Se usamos o comando <code>reset</code>, o comportamento é bem diferente. Quando resetamos um commit, voltamos para esse commit na linha do tempo e removemos todos os commits que foram feitos depois desse commit alvo, sendo necessário commitar novamente qualquer alteração que tenha sido feita após esse determinado momento no histórico da branch. Em diversos casos, é uma operação muito custosa e inviável, por esse motivo o comando <code>revert</code> é mais utilizado no cenário citado.</p>
+<p>A operação de reverter tem uma diferença principal quando comparada à operação de resetar. O ato de reverter não altera o histórico do projeto, sendo uma opção mais segura para os projetos que são compartilhados em um repositório remoto. Isso porque se revertemos um commit, um novo commit é criado revertendo as alterações desse commit, sem alterar o histórico do projeto. Se usamos o comando <code>reset</code>, o comportamento é bem diferente. Quando resetamos um commit, voltamos para esse commit na linha do tempo e removemos todos os commits que foram feitos depois desse commit alvo, sendo necessário commitar novamente qualquer alteração que tenha sido feita após esse determinado momento no histórico da branch. Em diversos casos, é uma operação muito custosa e inviável, por esse motivo o comando <code>revert</code> é mais utilizado no cenário citado.</p>
 <h2 is-upgraded>Desfazendo as modificações</h2>
 <p>Se executarmos o comando <code>git checkout</code> em um arquivo, caso ele esteja marcado como modificado, esse arquivo voltará ao seu estado original, ou seja, não alterado.</p>
-<p class="image-container"><img src="img/5fe681c9f2f95992.png"></p>
+<p class="image-container"><img src="img/8882b47f7a2c6a96.png"></p>
 <p>Obs: também podemos usar como argumento o diretório atual através do <code>.</code> com o comando <code>git checkout .</code> e desfazer todas as modificações de uma só vez.</p>
 <p class="image-container"><img src="img/8817a6d10add806f.png"></p>
 
@@ -206,10 +204,10 @@ aa1cf8d Adiciona README
       </google-codelab-step>
     
       <google-codelab-step label="Ramificações do código: trabalhando com branches" duration="0">
-        <p>Os repositórios do Git possuem a estrutura de uma árvore. Quando inicializamos um repositório, ele possui apenas um ramo (branch) padrão que geralmente possui o nome de master.</p>
+        <p>Os repositórios do Git possuem a estrutura de uma árvore. Quando inicializamos um repositório, ele possui apenas um ramo (branch) padrão que geralmente possui o nome de master ou main.</p>
 <p class="image-container"><img src="img/ea35efb2fd01ace.png"></p>
 <p>Podemos pensar nas branches como caminhos diferentes que a base de código segue a partir de um ponto inicial. Esses caminhos podem ou não se encontrar em um ponto futuro.</p>
-<p class="image-container"><img src="img/e21c064307e3332e.png"></p>
+<p class="image-container"><img src="img/941fa43e212381c0.png"></p>
 <h2 is-upgraded>Criando branches</h2>
 <p>Durante o desenvolvimento em projetos mais robustos e com equipes maiores, é comum ter a necessidade de seguir mais de um caminho a partir da branch padrão. Por exemplo, na maioria dos projetos, a branch que possui a base de código em desenvolvimento se chama <code>develop</code>. Vamos supor que dois times necessitem, cada um, criar uma funcionalidade nova nesse projeto. Os dois times irão partir inicialmente da branch develop, cada um criando sua própria branch com seu próprio código.</p>
 <p class="image-container"><img src="img/feda39a55b8193d7.png"></p>
@@ -225,12 +223,21 @@ aa1cf8d Adiciona README
 <p>A branch com uma marcação de destaque <code>*</code>  é a branch na qual estamos trabalhando no momento em que o comando foi rodado.</p>
 <h2 is-upgraded>Removendo uma branch</h2>
 <p>Para remover uma branch, basta utilizar o comando <code>git branch -d [nome]</code>.</p>
-<p>$ git branch -d feature/login</p>
-<p>Deleted branch feature/login (was 56bdd48).</p>
-<p>$ git branch -l</p>
-<ul>
-<li>develop feature/sign-up</li>
-</ul>
+<pre><code>$ git branch -l
+
+* develop
+  feature/login
+  feature/sign-up
+
+$ git branch -d feature/login
+
+Deleted branch feature/login (was 56bdd48).
+
+$ git branch -l
+
+* develop
+  feature/sign-up
+</code></pre>
 <h2 is-upgraded>Mesclando branches com merge</h2>
 <p>O merge é a forma que o Git tem de unir novamente duas branches que divergiram em certo ponto na linha do tempo do repositório. O comando <code>git merge [branch]</code> tem como alvo a <strong>branch atual</strong> que receberá a branch passada como argumento do comando <code>merge</code>.</p>
 <p class="image-container"><img src="img/64a0564a6bf2d186.png"></p>

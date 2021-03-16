@@ -3,19 +3,19 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2021-03-16T10:46:39-03:00",
+  "updated": "2021-03-16T15:52:11-03:00",
   "id": "git-basico-na-pratica",
   "duration": 0,
   "title": "",
   "authors": "Leandro Leite",
-  "summary": "Git basico na prática",
+  "summary": "Git básico na prática",
   "source": "git-basico-na-pratica.md",
   "theme": "",
   "status": [
     "published"
   ],
   "category": [
-    "git"
+    "ferramentas"
   ],
   "tags": [
     "codelab",
