@@ -1,7 +1,7 @@
 summary: Git básico na prática
 id: git-basico-na-pratica
 categories: Ferramentas
-tags: treinamento, codelab
+tags: treinamento, git, codelab
 status: Published
 authors: Leandro Leite
 Feedback Link: http://google.com

@@ -202,3 +202,6 @@ $color-weave-green, 'weave.svg');
 
 @include codelab-card(['kotlin'],
   $color-google-blue, 'kotlin.svg');
+
+@include codelab-card(['ferramentas'],
+$color-cast-grey, 'tools.svg');

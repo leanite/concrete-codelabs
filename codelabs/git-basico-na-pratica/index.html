@@ -253,7 +253,7 @@ $ git branch -l
 <p>O rebase é a outra forma que o Git possui para unir duas branches em um repositório. O comando <code>git rebase [branch]</code> tem como alvo a <strong>branch atual</strong> que receberá a branch passada como argumento do comando <code>rebase</code>.</p>
 <p>Em termos de integração de código, a diferença entre o <code>rebase</code> e o <code>merge</code> é que o rebase em vez de usar um commit de mesclagem como o merge, ele reescreve a linha do tempo do projeto criando novos commits para cada commit da branch original que está sendo integrada a branch alvo atual.</p>
 <p class="image-container"><img src="img/8ed2c675022b3e9.png"></p>
-<p>É importante ressaltar: não utilize o <code>rebase</code> em branches que outras pessoas também podem estar alterando porque a chance de ocorrer uma divergência entre as branches é enorme. O rebase resulta em commits novos, isso faz com que o Git pense que o histórico da sua branch divergiu da branch de todas as outras pessoas que podem estar atuando na mesma branch.</p>
+<p>É importante ressaltar: não utilize o <code>rebase</code> em branches que outras pessoas também podem estar alterando. A chance de ocorrer uma divergência entre as branches é enorme. O rebase resulta em commits novos e isso faz com que o Git pense que o histórico da sua branch divergiu da branch de todas as outras pessoas que podem estar atuando na mesma branch.</p>
 
 
       </google-codelab-step>
@@ -285,7 +285,7 @@ stash@{0}: On develop: Meu stash
 <p>Tanto os comandos <code>git stash apply</code> quando <code>git stash pop</code> servem para aplicar o último stash que foi criado no espaço de trabalho atual. A diferença entre os dois comandos é que o <code>apply</code> aplica e mantém o stash, enquanto o <code>pop</code> aplica e deleta o stash da pilha. Se queremos recuperar um stash específico, devemos passar o identificador dele como argumento tanto no <code>apply</code> quanto no <code>pop</code></p>
 <p class="image-container"><img src="img/91c09568cf8844a9.png"></p>
 <h2 is-upgraded>Removendo stashes</h2>
-<p>Para deletar um stash, devemos seguir a mesma lógica de aplicar um stash. Se usamos apenas o comando <code>git stash drop</code>, o último stash criado é deletado, mas também podemos deletar um stash específico utilizando <code>git stash drop [id]</code>.</p>
+<p>Para deletar um stash, devemos seguir a mesma lógica de aplicar um stash. Se usarmos apenas o comando <code>git stash drop</code>, o último stash criado é deletado. Também podemos deletar um stash específico utilizando <code>git stash drop [id]</code>.</p>
 <pre><code>$ git stash list
 
 stash@{0}: WIP on develop: fa2d54d Altera layout da tela de login
@@ -327,7 +327,7 @@ stash@{0}: WIP on feature/sign-up: f1e7b5b Adiciona request de cadastro
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; nome da branch que está sendo mergeada
 </code></pre>
 <p>Como estamos na branch <code>develop</code>, o bloco relacionado a <code>HEAD</code> é a parte do arquivo <code>LoginActivity.kt</code> que está na branch <code>develop</code>, e o outro bloco, a parte do arquivo que está na branch <code>feature/sign-up</code>.</p>
-<p>Para resolver um conflito de forma manual, basta remover o bloco que não será utilizado, removendo também os identificadores de branch e qualquer outros caractéres que fazem divisão entre os blocos.</p>
+<p>Para resolver um conflito de forma manual, basta remover o bloco que não será utilizado, removendo também os identificadores de branch e qualquer outros caracteres que fazem divisão entre os blocos.</p>
 
 
       </google-codelab-step>
@@ -633,9 +633,9 @@ a  b  d  D  e
 
       </google-codelab-step>
     
-      <google-codelab-step label="Extra: Usando apelidos para ganhar produtividade" duration="0">
-        <p>O Git possui uma grande quantidade de comandos combinados com várias opções e argumentos. Muitas vezes é muito difícil lembrar de todos. Felizmente existe a configuração de alias, que funcionam como apelidos para um comando ou parte dele no Git.</p>
-<p>Por exemplo, se não queremos lembrar, ou até mesmo ganhar produtividade ao executar o comando necessário para remover um arquivo da área de preparo, em vez de utilizar <code>git reset HEAD -- [arquivo]</code> poderíamos usar `git unstage [arquivo].</p>
+      <google-codelab-step label="Extra: usando apelidos para ganhar produtividade" duration="0">
+        <p>O Git possui uma grande quantidade de comandos combinados com várias opções e argumentos. Muitas vezes é difícil lembrar de todos. Felizmente existe a configuração de alias, que funciona como apelidos para um comando ou parte dele no Git.</p>
+<p>Por exemplo, se não queremos lembrar, ou até mesmo ganhar produtividade ao executar o comando necessário para remover um arquivo da área de preparo, em vez de utilizar <code>git reset HEAD -- [arquivo]</code> poderíamos usar <code>git unstage [arquivo]</code>.</p>
 <p>Para isso, devemos configurar aliases no git através do comando <code>git config --global alias.[alias] [comando]</code>, onde <code>[alias]</code> é o apelido que queremos dar e <code>[comando]</code> o comando a ser substituído.</p>
 <p>Alguns possíveis exemplos, além do <code>unstage</code> citado acima:</p>
 <pre><code>$ git config --global alias.unstage &#39;reset HEAD --&#39;
