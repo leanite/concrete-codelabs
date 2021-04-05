@@ -1,28 +1,24 @@
-summary: Acessibilidade para deficientes visuais
-id: acessibilidade-para-deficientes-visuais
+summary: Conceitos de modularização
+id: conceitos-de-modularizacao
 categories: Android
 tags: tutorial, codelab
 status: Published
-authors: Leandro Leite
+authors: Leite & PH
 Feedback Link: http://google.com
 
 # Conceitos de modularização
 
 ## Motivação
 
-O que é um módulo?
-Problema que resolve: isola as classes, etc
-Muito mais fácil fazer import de algum em um package diferente e começar a criar dependências
+Um módulo nada mais é do que um conjunto de código e e configurações de compilação que permitem dividir o projeto em unidades de diferentes funcionalidades. O projeto pode ter um ou mais módulos, e um módulo pode usar outro como dependência, de forma que cada módulo pode ser individualmente compilado, testado e *debuggado*.
 
-## Modularização e SOLID
+Com essa divisão em unidades de diferentes funcionalidades, podemos ajudar o nosso projeto a atingir princípios da engenharia que são bastante difundidos, como o princípio da responsabilidade única (S do SOLID) e o princípio da inversão de dependência (D do SOLID).
 
-Fazer comparações rápidas entre SOLID e a modularização
-Em vez de pensar em classes, pensar em módulos!
-o S e o D do SOLID são bem presentes nesse modelo
+Focando apenas na estrutura de um projeto, sem mencionar os ganhos de performance, a modularização pode ajudar bastante a manter as dependências e a arquitetura do projeto organizadas. É muito mais fácil violar uma regra arquitetural simplesmente importando uma classe de outro *package* na sua classe atual e seguir o seu fluxo de desenvolvimento sem pensar em uma solução melhor. Quando módulos trabalham isolados, para usar uma classe de outro módulo, devemos ou importar e assumir a dependência desse módulo, ou criar uma forma indireta de comunicação. E é exatamente isso que veremos nesse Codelab!
 
 ## Criando um módulo Android
 
-Para criar um módulo novo, devemos ir até **File**, depois selecionar **New** e finalmente **Module**.
+Para criar um módulo novo, devemos ir até **File**, depois selecionar **New** e finalmente **New Module...**.
 
 ![](assets/conceitos-de-modularizacao/new-module.png)
 
@@ -34,11 +30,11 @@ Em seguida, dê um nome ao módulo a ser criado e confira se o seu package condi
 
 ![](assets/conceitos-de-modularizacao/create-module.png)
 
-Ao clicar em **Finish** o módulo e seus arquivos serão criados no projeto!
+Ao clicar em **Finish**, o módulo e seus arquivos serão criados no projeto!
 
 ![](assets/conceitos-de-modularizacao/module-created.png)
 
-Alguns arquivos como `.gitignore`, `consumer-rules.pro` e `proguard-rules.pro`, assim como o diretório `libs`, podem ser dispensáveis ao módulo se tiverem as mesmas configurações que o módulo principal do projeto, ou simplesmente não tiver nenhuma necessidade de mudança. Se for o caso, podemos remover esses arquivos sem problemas do nosso novo módulo criado. 
+Alguns arquivos como `.gitignore`, `consumer-rules.pro` e `proguard-rules.pro`, assim como o diretório `libs`, podem ser dispensáveis ao módulo se tiverem as mesmas configurações que o módulo principal do projeto, ou simplesmente não tiver nenhuma necessidade de mudança. No caso do nosso exemplo, podemos remover esses arquivos sem problemas do nosso novo módulo criado. 
 
 ## Estrutura de um módulo
 
@@ -48,7 +44,7 @@ O módulo que criamos possui a estrutura semelhante ao módulo principal **app**
 
 Ele possui um arquivo `build.gradle` com as suas configurações de build e um `AndroidManifest.xml` para declarar permissões, Activities, entre outros, exatamente da mesma forma do módulo app.
 
-Especificamente sobre o `build.gradle`, é uma boa prática tornarmos comuns algumas configurações entre os módulos da aplicação. Por exemplo, se cada módulo tiver o seu próprio `compileSdkVersion`, a cada update do SDK Android nós teremos que alterar em todos os arquivos de todos os módulos. Pensando nessa e em outras possíveis alterações, é recomendado configurar o `build.gradle`raiz, o da raíz do projeto que está fora do módulo app, com todas as configurações comuns dos módulos.
+Especificamente sobre o `build.gradle`, é uma boa prática tornarmos comuns algumas configurações entre os módulos da aplicação. Por exemplo, se cada módulo tiver o seu próprio `compileSdkVersion`, a cada update do SDK Android nós teremos que alterar em todos os arquivos de todos os módulos. Pensando nessa e em outras possíveis alterações, é recomendado configurar o `build.gradle` raíz, o da raíz do projeto que está fora do módulo app, com todas as configurações comuns aos módulos.
 
 **build.gradle raíz**
 ```
@@ -100,7 +96,7 @@ subprojects {
 
 Basicamente estamos incluindo um bloco que indica que para todos os subprojects, que são os módulos do nosso projeto, configurados com os plugins `android` ou `android-library`, setaremos as configurações especificadas no bloco `android{}`. É importante ressaltar que o módulo **app** também é um subproject.
 
-O `applicationId` configurado deve ser único. Por esse motivo, devemos deixar somente esta configuração no `build.gradle` do módulo principal **app** e removê-la de todos os outros módulos.
+O `applicationId` configurado em um projeto deve ser único. Por esse motivo, devemos deixar somente esta configuração no `build.gradle` do módulo principal **app** e removê-la de todos os outros módulos.
 
 **app/build.gradle**
 ```
@@ -186,13 +182,13 @@ Em determinadas situações, é comum ser necessária a criação de submódulos
 
 Supondo que já criamos um módulo chamado **core**, da mesma forma que foi feito anteriormente, vamos criar um submódulo **base**.
 
-Primeiro, com o módulo **core** selecionado, clicamos em **New** e, em seguida, **Module. Vamos selecionar, novamente, a opção **Android Library**.
+Primeiro, com o módulo **core** selecionado, clicamos em **New** e, em seguida, **Module**. Vamos selecionar, novamente, a opção **Android Library**.
 
 ![](assets/conceitos-de-modularizacao/create-submodule.png)
 
 Ao nomear o módulo, devemos manter o prefixo `:core`, o que garante que o módulo **base** será um submódulo do módulo **core**. Isso significa que o seu name será `:core:base`. 
 
-Também devemos nos atentar ao **package** do submódulo. Por padrão, o package vem apenas com o nome do submódulo, ou seja, apenas base. É uma boa prática colocarmos o package com a mesma estrutura presente nos módulos, ou seja, **`[package].core.base`** e não simplesmente ``[package].base`.
+Também devemos nos atentar ao **package** do submódulo. Por padrão, o package vem apenas com o nome do submódulo, ou seja, apenas base. É uma boa prática colocarmos o package com a mesma estrutura presente nos módulos, ou seja, **`[package].core.base`** e não simplesmente `[package].base`.
 
 ![](assets/conceitos-de-modularizacao/submodule-base-config.png)
 
@@ -233,7 +229,7 @@ val appModule = listOf<Module>(
 
 ### Módulo validator
 
-Dividimos o módulo validator em dois submódulos: core e interface. O submódulo interface tem o contrato necessário para usar um validador, enquanto que o módulo core possui a lógica dos validadores.
+Dividimos o módulo validator em dois submódulos: core e interface. O submódulo interface tem o contrato necessário para usar um validador, enquanto o módulo core possui a lógica dos validadores.
 
 No módulo **interface**, temos apenas uma interface `Validator`.
 
@@ -335,6 +331,8 @@ class FeatureActivity : AppCompatActivity() {
 }
 ```
 
+O `FeatureModule` é o módulo de injeção do Koin.
+
 **FeatureModule.kt**
 ```
 val featureModule = module {
@@ -351,9 +349,11 @@ A solução pode ser bem parecida com o exemplo que vimos no passo anterior. Vam
 É muito comum uma Activity ou Fragment necessitar de um objeto como parâmetro para que seu conteúdo seja criado de acordo com informações dinâmicas. No caso das Activities, enviamos esses objetos via `Intent` e necessitamos ter a classe dessas instâncias mapeadas na interface de navegação. Nesse ponto, devemos tomar uma decisão arquitetural quanto aos modelos da nossa aplicação: teremos um sub módulo **model** dentro do módulo **base** comum a todas as features ou utilizaremos objetos de fronteiras de módulos garantindo que cada modelo pertença apenas à sua respectiva feature?
 
 **sub módulo model em base**
+
 ![](assets/conceitos-de-modularizacao/real-base-model-esquema.png)
 
 **objetos de fronteira e models separados**
+
 ![](assets/conceitos-de-modularizacao/real-fronteira-esquema.png)
 
 Para o primeiro cenário, mais simples, temos:
@@ -465,4 +465,4 @@ class LoginActivity : AppCompatActivity() {
 }
 ```
 
-Não se esqueçam de implementar a injeção de dependência, como visto no passo de exemplo, para que tudo funcione corretamente. Uma vez que a injeção de dependência esteja correta, o problema de navegação entre features está resolvido!
+Não se esqueçam de implementar a injeção de dependência, como visto no passo anterior, para que tudo funcione corretamente. Uma vez que a injeção de dependência esteja correta, o problema de navegação entre features está resolvido!
