@@ -182,22 +182,287 @@ Existe uma variedade de códigos que são comuns aos módulos de um projeto. Ger
 
 ## Criando submódulos
 
-Falar de core, base, assets, network, etc
+Em determinadas situações, é comum ser necessária a criação de submódulos em um módulo do projeto. Por exemplo, se estamos modularizando um conjunto de código comum, muitas vezes temos um módulo **core** com possíveis submódulos como **base**, **network**, **model**, entre outros.
 
-Falar aqui de submódulos e como criá-los :features:cinema
+Supondo que já criamos um módulo chamado **core**, da mesma forma que foi feito anteriormente, vamos criar um submódulo **base**.
 
+Primeiro, com o módulo **core** selecionado, clicamos em **New** e, em seguida, **Module. Vamos selecionar, novamente, a opção **Android Library**.
 
+![](assets/conceitos-de-modularizacao/create-submodule.png)
+
+Ao nomear o módulo, devemos manter o prefixo `:core`, o que garante que o módulo **base** será um submódulo do módulo **core**. Isso significa que o seu name será `:core:base`. 
+
+Também devemos nos atentar ao **package** do submódulo. Por padrão, o package vem apenas com o nome do submódulo, ou seja, apenas base. É uma boa prática colocarmos o package com a mesma estrutura presente nos módulos, ou seja, **`[package].core.base`** e não simplesmente ``[package].base`.
+
+![](assets/conceitos-de-modularizacao/submodule-base-config.png)
+
+Feito isso, nosso submódulo está criado! É possível vê-lo dentro da estrutura do módulo **core** e seu import no arquivo `settings.gradle`.
 
 ## Comunicação entre módulos
 
-E se quisermos utilizar uma classe de um outro módulo sem extrair esse código para um terceiro módulo?
+Em determinadas situações, como desenvolvedores, queremos utilizar alguma funcionalidade de um módulo, mas não queremos fazer o import completo de todas as classes e particularidades desse módulo.
 
-Interfaces
-Injeção de dependência
-Ensinar tipo como é feita a modularização da navegação na BrMalls
+Vamos supor o seguinte exemplo: temos uma feature que necessita de duas validações, uma para saber se uma String é um telefone de celular válido e outra para saber se uma String é um nome completo. Vamos criar os módulos e modelar a solução da seguinte forma:
+
+![](assets/conceitos-de-modularizacao/comm-modulo-esquema.png)
+
+Interpretando o diagrama acima, temos que o módulo **app** tem como dependência os módulos **feature** e **validator**. O módulo **validator** possui, e também tem como dependência, os seus dois submódulos **interface** e **core**. O submódulo **core** tem como dependência o submódulo **interface**. Finalmente, o módulo **feature** tem como dependência o submódulo **interface** de **validator**.
+
+### Módulo app
+
+O módulo app apenas inicializará o Koin, já que a injeção de dependência tem um papel fundamental nessa comunicação.
+
+**MyApplication.kt**
+```
+class MyApplication : Application(){
+    override fun onCreate() {
+        super.onCreate()
+        startKoin{
+            androidLogger()
+            androidContext(this@MyApplication)
+            modules(appModule)
+        }
+    }
+}
+
+val appModule = listOf<Module>(
+    validatorModule,
+    featureModule
+)
+```
+
+### Módulo validator
+
+Dividimos o módulo validator em dois submódulos: core e interface. O submódulo interface tem o contrato necessário para usar um validador, enquanto que o módulo core possui a lógica dos validadores.
+
+No módulo **interface**, temos apenas uma interface `Validator`.
+
+**Validator.kt**
+```
+interface Validator {
+    fun validateFullName(value: String): Boolean
+    fun validatePhone(value: String): Boolean
+}
+```
+
+No módulo **core**, temos duas classes, `PhoneValidator` e `FullNameValidator`.
+
+**PhoneValidator.kt**
+```
+class PhoneValidator {
+    fun isValidPhone(phone: String): Boolean =
+        phone.matches(Regex("^\\([1-9]{2}\\) 9\\d{4}-\\d{4}\$"))
+}
+```
+
+**FullNameValidator.kt**
+```
+class FullNameValidator {
+    fun isFullName(name: String): Boolean {
+        return isGreaterTwoNames(splitName(name.trim())) &&
+                isGreaterTwoCharacters(splitName(name.trim())) &&
+                !hasSpecialCharacters(splitName(name.trim())) &&
+                !hasNumbers(splitName(name.trim()))
+    }
+
+    ...
+}
+```
+
+Para utilizar a implementação dessas duas classes e também implementar a interface `Validator` do submódulo interface, temos a classe `ValidatorImpl`.
+
+**ValidatorImpl.kt**
+```
+class ValidatorImpl(
+    private val fullNameValidator: FullNameValidator,
+    private val phoneValidator: PhoneValidator
+) : Validator {
+
+    override fun validateFullName(value: String): Boolean =
+        fullNameValidator.isFullName(value)
+
+    override fun validatePhone(value: String): Boolean =
+        phoneValidator.isValidPhone(value)
+}
+```
+
+Finalmente, a única coisa presente no módulo **validator** é o módulo de injeção do Koin.
+
+**ValidatorModule.kt**
+```
+val validatorModule = module {
+    single { FullNameValidator() }
+    single { PhoneValidator() }
+    single { ValidatorImpl(get(), get()) } bind Validator::class
+}
+```
+
+Importante reparar que é aqui nesse módulo do Koin que a magia acontece. Estamos expondo apenas uma interface de comunicação através do submódulo **interface**, porém a injeção de dependência garante que onde for requisitada a dependência de `Validator`, retornaremos uma instância de `ValidatorImpl`.
+
+### Módulo feature
+
+O módulo **feature** possui a `FeatureActivity` e o `FeatureViewModel`, além do módulo do Koin `FeatureModule`, para utilizar a validação do módulo **validator**.
+
+É no `FeatureViewModel` que utilizamos o módulo **validator** sem conhecer de fato as suas implementações. A injeção de dependência garante que será utilizada a implementação da interface `Validator` como vimos anteriormente.
+
+**FeatureViewModel.kt**
+```
+class FeatureViewModel(
+    private val validator: Validator
+) : ViewModel() {
+
+    fun isFullName(name: String) = validator.validateFullName(name)
+
+    fun isPhoneValid(phone: String) = validator.validatePhone(phone)
+}
+```
+
+Por último, temos a `FeatureActivity` e o `FeatureModule`. A `FeatureActivity` usará o `FeatureViewModel` para validar os seus campos de texto relativos ao número de telefone celular e nome completo.
+
+**FeatureActivity.kt**
+```
+class FeatureActivity : AppCompatActivity() {
+
+    private val viewModel: FeatureViewModel by viewModel()
+
+    ...
+
+    private fun enableConfirmButton() {
+        buttonConfirm.isEnabled = 
+            viewModel.isFullName(editTextFullName.text.toString()) &&
+            viewModel.isPhoneValid(editTextPhone.text.toString())
+    }
+}
+```
+
+**FeatureModule.kt**
+```
+val featureModule = module {
+    viewModel { FeatureViewModel(get()) }
+}
+```
 
 ## Caso real: resolvendo problemas de navegação
 
-Apresentar a solução de navegação baseada no que foi ensinado acima
-Duas abordagens: módulo Model comum a 2 módulos que querem se comunicar e módulo Model fechado para cada módulo
-    No caso do Model fechado, o módulo de navigation possui um Model de comunicação, como se fosse um modelo de boundary, que faz uma tradução direta com algum modelo a ser usado pelos módulos na comunicação, sem expor seus reais modelos
+Quando temos features em diferentes módulos, um desafio muito comum que temos que enfrentar é a navegação entre fluxos de funcionalidades diferentes. Por exemplo, vamos supor um projeto em que existam duas features em dois módulos separados, Login e Tela Principal. Uma vez que um usuário passe pela tela de login e tenha sucesso, ele deveria ser redirecionado para a tela pricipal da aplicação. Como podemos fazer essa operação se a tela principal e o login estão em módulos diferentes que não devem ter dependência entre eles?
+
+A solução pode ser bem parecida com o exemplo que vimos no passo anterior. Vamos modelar uma possível solução: o módulo **base** possui um módulo **navigation** com todas as interfaces de navegação do projeto. Cada módulo de feature tem como dependência o módulo navigation e utiliza uma interface de navegação para fazer uma implementação dessa interface que navegue para suas Activities ou Fragments locais. A injeção de dependência irá garantir que cada implementação seja usada de forma correta em cada ViewModel que utilize essas interfaces nos seus construtores.
+
+É muito comum uma Activity ou Fragment necessitar de um objeto como parâmetro para que seu conteúdo seja criado de acordo com informações dinâmicas. No caso das Activities, enviamos esses objetos via `Intent` e necessitamos ter a classe dessas instâncias mapeadas na interface de navegação. Nesse ponto, devemos tomar uma decisão arquitetural quanto aos modelos da nossa aplicação: teremos um sub módulo **model** dentro do módulo **base** comum a todas as features ou utilizaremos objetos de fronteiras de módulos garantindo que cada modelo pertença apenas à sua respectiva feature?
+
+**sub módulo model em base**
+![](assets/conceitos-de-modularizacao/real-base-model-esquema.png)
+
+**objetos de fronteira e models separados**
+![](assets/conceitos-de-modularizacao/real-fronteira-esquema.png)
+
+Para o primeiro cenário, mais simples, temos:
+
+**HomeNavigation.kt em base/navigation**
+```
+interface HomeNavigation {
+    fun openHome(context: Context, user: User)
+}
+```
+
+**User.kt em base/model**
+```
+@Parcelize
+data class User(
+    val id: Int,
+    val fullName: String,
+    val email: String
+)
+```
+
+Para o segundo cenário, utilizando os objetos de fronteiras, temos:
+
+**HomeNavigation.kt em base/navigation**
+```
+interface HomeNavigation {
+    fun openHome(context: Context, homeBundle: HomeBundle)
+}
+
+@Parcelize
+data class HomeBundle(
+    val userId: Int
+)
+```
+
+**User.kt em auth/model**
+```
+@Parcelize
+data class User(
+    val id: Int,
+    val fullName: String,
+    val email: String
+)
+```
+
+Vale ressaltar que são duas formas equivalentes de resolver o mesmo problema. Cada projeto, de acordo com as suas particularidades, pode se adequar melhor a uma das soluções propostas. Independente de qual solução arquitetural vamos adotar, o resto da solução é basicamente o mesmo!
+
+No módulo **home**, teremos uma implementação de `HomeNavigation` do módulo **navigation**.
+
+**HomeNavigationImpl.kt em home**
+```
+class HomeNavigationImpl : HomeNavigation {
+    override fun openHome(context: Context, user: User) {
+        val intent = Intent()
+
+        intent.putExtra(HomeActivity.USER_EXTRA, user)
+
+        context.startActivity(intent)
+    }
+}
+```
+ou
+```
+class HomeNavigationImpl : HomeNavigation {
+    override fun openHome(context: Context, homeBundle: HomeBundle) {
+        val intent = Intent()
+
+        intent.putExtra(HomeActivity.HOME_BUNDLE_EXTRA, homeBundle)
+
+        context.startActivity(intent)
+    }
+}
+```
+
+No módulo **login**, teremos um `ViewModel` que terá como dependência uma instância de `HomeNavigation`. A injeção de dependência irá garantir que esse `ViewModel` utilize uma instância de `HomeNavigationImpl` do módulo **home**.
+
+**LoginViewModel.kt em login**
+```
+class LoginViewModel(
+        private val homeNavigation: HomeNavigation
+) : ViewModel() {
+    fun openHome(context: Context, user: User) = homeNavigation.openHome(context, user)
+}
+```
+ou
+```
+class LoginViewModel(
+        private val homeNavigation: HomeNavigation
+) : ViewModel() {
+    fun openHome(context: Context, user: User) = homeNavigation.openHome(context, HomeBundle(user.id))
+}
+```
+
+Com o `ViewModel` implementado, basta uma `Activity` ou um `Fragment` utilizar a navegação construída.
+
+**LoginActivity.kt em login**
+```
+class LoginActivity : AppCompatActivity() {
+
+    private val viewModel: LoginViewModel by viewModel()
+
+    ...
+
+    override fun setUpObservables() {
+        viewModel.loginSuccess.observe(this, Observer {
+            viewModel.openHome(context, /*...*/)
+        })
+    }
+}
+```
+
+Não se esqueçam de implementar a injeção de dependência, como visto no passo de exemplo, para que tudo funcione corretamente. Uma vez que a injeção de dependência esteja correta, o problema de navegação entre features está resolvido!
